@@ -4,221 +4,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Multi TXT Tool</title>
-
+<title>Ultimate TXT Suite</title>
 <style>
-body{
-    font-family:Arial,sans-serif;
-    background:#0f172a;
-    color:white;
-    margin:0;
-    padding:30px;
-}
-
-.container{
-    max-width:900px;
-    margin:auto;
-}
-
-.card{
-    background:#1e293b;
-    padding:25px;
-    border-radius:16px;
-    margin-bottom:25px;
-    box-shadow:0 0 15px rgba(0,0,0,.3);
-}
-
-h1{
-    text-align:center;
-    margin-bottom:30px;
-}
-
-h2{
-    margin-top:0;
-}
-
-input, button{
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    border-radius:10px;
-    border:none;
-    font-size:16px;
-}
-
-button{
-    background:#2563eb;
-    color:white;
-    cursor:pointer;
-}
-
-button:hover{
-    background:#1d4ed8;
-}
-
-.status{
-    margin-top:15px;
-    color:#22c55e;
-    word-break:break-word;
-}
+body{font-family:Arial;background:#0f172a;color:#fff;margin:0;padding:20px}
+.container{max-width:1100px;margin:auto}
+.card{background:#1e293b;padding:20px;border-radius:16px;margin-bottom:20px}
+input,textarea,button,select{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:none;box-sizing:border-box}
+button{background:#2563eb;color:#fff;cursor:pointer}
+button:hover{background:#1d4ed8}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+pre{white-space:pre-wrap;background:#111827;padding:10px;border-radius:10px}
 </style>
 </head>
-
 <body>
-
 <div class="container">
+<h1>Ultimate TXT Suite</h1>
 
-<h1>Multi TXT Tool</h1>
+<div class="grid">
 
 <div class="card">
-    <h2>1. Garena Filter Tool</h2>
-
-    <p>
-        Lọc các dòng chứa "garena" và xuất user:pass
-    </p>
-
-    <input type="file" id="filterFile" accept=".txt">
-
-    <button onclick="filterGarena()">
-        Bắt Đầu Lọc
-    </button>
-
-    <div class="status" id="filterStatus"></div>
+<h2>Filter Domain + Remove Duplicate</h2>
+<input type="file" id="filterFile" multiple accept=".txt">
+<textarea id="domains">garena
+facebook
+riot
+steam</textarea>
+<button onclick="runFilter()">Run Filter</button>
+<pre id="filterInfo"></pre>
 </div>
 
 <div class="card">
-    <h2>2. TXT Splitter Tool</h2>
-
-    <p>
-        Chia file TXT thành nhiều file nhỏ
-    </p>
-
-    <input type="file" id="splitFile" accept=".txt">
-
-    <input type="number" id="splitCount" placeholder="Nhập số file muốn tách" value="5">
-
-    <button onclick="splitTxtFile()">
-        Bắt Đầu Cắt File
-    </button>
-
-    <div class="status" id="splitStatus"></div>
+<h2>TXT Splitter</h2>
+<input type="file" id="splitFile" accept=".txt">
+<select id="splitMode">
+<option value="lines">Theo số dòng</option>
+<option value="parts">Theo số file</option>
+</select>
+<input type="number" id="splitValue" value="5">
+<button onclick="runSplit()">Split TXT</button>
+<pre id="splitInfo"></pre>
 </div>
 
+<div class="card">
+<h2>Format Converter</h2>
+<input type="file" id="convertFile" accept=".txt">
+<select id="convertType">
+<option value="emailpass">email:pass</option>
+<option value="userpass">user:pass</option>
+</select>
+<button onclick="convertFormat()">Convert</button>
+<pre id="convertInfo"></pre>
+</div>
+
+<div class="card">
+<h2>Search / Sort</h2>
+<input type="file" id="searchFile" accept=".txt">
+<input type="text" id="keyword" placeholder="Nhập keyword">
+<button onclick="searchTxt()">Search</button>
+<pre id="searchInfo"></pre>
+</div>
+
+</div>
 </div>
 
 <script>
-
-function downloadFile(content, filename){
-
-    const blob = new Blob([content], {type:"text/plain"});
-
-    const a = document.createElement("a");
-
-    a.href = URL.createObjectURL(blob);
-
-    a.download = filename;
-
-    a.click();
+function download(content,name){
+ const blob=new Blob([content],{type:"text/plain"});
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);
+ a.download=name;
+ a.click();
 }
 
-function filterGarena(){
+async function runFilter(){
+ const files=document.getElementById("filterFile").files;
+ const domains=document.getElementById("domains").value.toLowerCase().split("\n");
+ let set=new Set();
+ let total=0;
 
-    const fileInput = document.getElementById("filterFile");
-    const status = document.getElementById("filterStatus");
+ for(const file of files){
+   const text=await file.text();
+   const lines=text.split(/\r?\n/);
+   total+=lines.length;
 
-    if(fileInput.files.length === 0){
-        alert("Vui lòng chọn file TXT");
-        return;
-    }
+   for(const line of lines){
+     const low=line.toLowerCase();
+     if(domains.some(d=>low.includes(d))){
+       const p=line.split(":");
+       if(p.length>=2){
+         set.add(p.slice(-2).join(":"));
+       }
+     }
+   }
+ }
 
-    const file = fileInput.files[0];
+ download([...set].join("\n"),"filtered.txt");
 
-    const reader = new FileReader();
-
-    reader.onload = function(e){
-
-        const text = e.target.result;
-
-        const lines = text.split(/\r?\n/);
-
-        let results = [];
-
-        for(let line of lines){
-
-            if(line.toLowerCase().includes("garena")){
-
-                const parts = line.split(":");
-
-                if(parts.length >= 3){
-
-                    const user = parts[parts.length - 2].trim();
-                    const pass = parts[parts.length - 1].trim();
-
-                    if(user && pass){
-                        results.push(user + ":" + pass);
-                    }
-                }
-            }
-        }
-
-        downloadFile(results.join("\n"), "garena_filtered.txt");
-
-        status.innerHTML =
-            "Hoàn thành! Đã lọc " + results.length + " dòng";
-    };
-
-    reader.readAsText(file);
+ document.getElementById("filterInfo").textContent=
+ "Total lines: "+total+"\nFiltered: "+set.size;
 }
 
-function splitTxtFile(){
+async function runSplit(){
+ const file=document.getElementById("splitFile").files[0];
+ const mode=document.getElementById("splitMode").value;
+ const val=parseInt(document.getElementById("splitValue").value);
 
-    const fileInput = document.getElementById("splitFile");
-    const splitCount = parseInt(document.getElementById("splitCount").value);
-    const status = document.getElementById("splitStatus");
+ const text=await file.text();
+ const lines=text.split(/\r?\n/);
 
-    if(fileInput.files.length === 0){
-        alert("Vui lòng chọn file TXT");
-        return;
-    }
+ let chunk=val;
 
-    if(splitCount <= 0){
-        alert("Số file phải lớn hơn 0");
-        return;
-    }
+ if(mode==="parts"){
+   chunk=Math.ceil(lines.length/val);
+ }
 
-    const file = fileInput.files[0];
+ for(let i=0;i<lines.length;i+=chunk){
+   download(
+    lines.slice(i,i+chunk).join("\n"),
+    "part_"+(Math.floor(i/chunk)+1)+".txt"
+   );
+ }
 
-    const reader = new FileReader();
-
-    reader.onload = function(e){
-
-        const text = e.target.result;
-
-        const lines = text.split(/\r?\n/);
-
-        const perFile = Math.ceil(lines.length / splitCount);
-
-        for(let i = 0; i < splitCount; i++){
-
-            const start = i * perFile;
-            const end = start + perFile;
-
-            const chunk = lines.slice(start, end).join("\n");
-
-            downloadFile(
-                chunk,
-                "split_part_" + (i + 1) + ".txt"
-            );
-        }
-
-        status.innerHTML =
-            "Hoàn thành! Đã tách thành " + splitCount + " file";
-    };
-
-    reader.readAsText(file);
+ document.getElementById("splitInfo").textContent="Done!";
 }
 
+async function convertFormat(){
+ const file=document.getElementById("convertFile").files[0];
+ const type=document.getElementById("convertType").value;
+
+ const text=await file.text();
+ const lines=text.split(/\r?\n/);
+
+ let out=[];
+
+ for(const line of lines){
+   const p=line.split(":");
+   if(type==="emailpass" && p.length>=2){
+      out.push(p[0]+":"+p[1]);
+   }
+   if(type==="userpass" && p.length>=2){
+      out.push(p[p.length-2]+":"+p[p.length-1]);
+   }
+ }
+
+ download(out.join("\n"),"converted.txt");
+
+ document.getElementById("convertInfo").textContent=
+ "Converted: "+out.length;
+}
+
+async function searchTxt(){
+ const file=document.getElementById("searchFile").files[0];
+ const keyword=document.getElementById("keyword").value.toLowerCase();
+
+ const text=await file.text();
+
+ const result=text
+   .split(/\r?\n/)
+   .filter(x=>x.toLowerCase().includes(keyword));
+
+ download(result.join("\n"),"search_result.txt");
+
+ document.getElementById("searchInfo").textContent=
+ "Found: "+result.length;
+}
 </script>
-
 </body>
 </html>
