@@ -5,123 +5,381 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ultimate TXT Suite</title>
+
 <style>
-body{font-family:Arial;background:#0f172a;color:#fff;margin:0;padding:20px}
-.container{max-width:1100px;margin:auto}
-.card{background:#1e293b;padding:20px;border-radius:16px;margin-bottom:20px}
-input,textarea,button,select{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:none;box-sizing:border-box}
-button{background:#2563eb;color:#fff;cursor:pointer}
-button:hover{background:#1d4ed8}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-pre{white-space:pre-wrap;background:#111827;padding:10px;border-radius:10px}
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0b1120;
+    color:white;
+}
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:240px;
+    height:100%;
+    background:#111827;
+    padding:20px;
+    box-sizing:border-box;
+}
+
+.sidebar h2{
+    margin-top:0;
+}
+
+.menu-btn{
+    width:100%;
+    padding:14px;
+    margin-top:10px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+    font-size:15px;
+}
+
+.menu-btn:hover{
+    background:#1d4ed8;
+}
+
+.main{
+    margin-left:260px;
+    padding:25px;
+}
+
+.card{
+    background:#1e293b;
+    padding:25px;
+    border-radius:16px;
+}
+
+input,textarea,select,button{
+    width:100%;
+    padding:12px;
+    margin-top:12px;
+    border:none;
+    border-radius:10px;
+    box-sizing:border-box;
+    font-size:15px;
+}
+
+button.action{
+    background:#4f46e5;
+    color:white;
+    cursor:pointer;
+}
+
+button.action:hover{
+    background:#4338ca;
+}
+
+pre{
+    background:#0f172a;
+    padding:15px;
+    border-radius:10px;
+    margin-top:15px;
+    overflow:auto;
+    max-height:350px;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
 </style>
 </head>
 <body>
-<div class="container">
-<h1>Ultimate TXT Suite</h1>
 
-<div class="grid">
+<div class="sidebar">
 
+<h2>TXT TOOL MENU</h2>
+
+<button class="menu-btn" onclick="showPage('filterPage')">
+Filter Domain
+</button>
+
+<button class="menu-btn" onclick="showPage('advancedPage')">
+Advanced Filter
+</button>
+
+<button class="menu-btn" onclick="showPage('splitPage')">
+TXT Splitter
+</button>
+
+<button class="menu-btn" onclick="showPage('convertPage')">
+Format Convert
+</button>
+
+<button class="menu-btn" onclick="showPage('searchPage')">
+Search / Sort
+</button>
+
+</div>
+
+<div class="main">
+
+<div id="filterPage" class="page active">
 <div class="card">
-<h2>Filter Domain + Remove Duplicate</h2>
-<input type="file" id="filterFile" multiple accept=".txt">
+
+<h1>Filter Domain + Remove Duplicate</h1>
+
+<input type="file" id="filterFile" multiple>
+
 <textarea id="domains">garena
 facebook
 riot
 steam</textarea>
-<button onclick="runFilter()">Run Filter</button>
+
+<button class="action" onclick="runFilter()">
+Run Filter
+</button>
+
 <pre id="filterInfo"></pre>
+
+</div>
 </div>
 
+<div id="advancedPage" class="page">
 <div class="card">
-<h2>TXT Splitter</h2>
-<input type="file" id="splitFile" accept=".txt">
+
+<h1>Advanced TXT Filter</h1>
+
+<input type="file" id="advancedFile">
+
+<input type="number" id="skin" placeholder="Skin >=" value="0">
+<input type="number" id="ss" placeholder="SS >=" value="0">
+<input type="number" id="sss" placeholder="SSS >=" value="0">
+
+<select id="ban">
+<option value="">Ban --</option>
+<option>No</option>
+<option>Yes</option>
+</select>
+
+<button class="action" onclick="advancedFilter()">
+Run Advanced Filter
+</button>
+
+<pre id="advancedInfo"></pre>
+
+</div>
+</div>
+
+<div id="splitPage" class="page">
+<div class="card">
+
+<h1>TXT Splitter</h1>
+
+<input type="file" id="splitFile">
+
 <select id="splitMode">
 <option value="lines">Theo số dòng</option>
 <option value="parts">Theo số file</option>
 </select>
+
 <input type="number" id="splitValue" value="5">
-<button onclick="runSplit()">Split TXT</button>
+
+<button class="action" onclick="splitTxt()">
+Split TXT
+</button>
+
 <pre id="splitInfo"></pre>
+
+</div>
 </div>
 
+<div id="convertPage" class="page">
 <div class="card">
-<h2>Format Converter</h2>
-<input type="file" id="convertFile" accept=".txt">
+
+<h1>Format Converter</h1>
+
+<input type="file" id="convertFile">
+
 <select id="convertType">
 <option value="emailpass">email:pass</option>
 <option value="userpass">user:pass</option>
 </select>
-<button onclick="convertFormat()">Convert</button>
+
+<button class="action" onclick="convertFormat()">
+Convert
+</button>
+
 <pre id="convertInfo"></pre>
+
+</div>
 </div>
 
+<div id="searchPage" class="page">
 <div class="card">
-<h2>Search / Sort</h2>
-<input type="file" id="searchFile" accept=".txt">
+
+<h1>Search / Sort</h1>
+
+<input type="file" id="searchFile">
+
 <input type="text" id="keyword" placeholder="Nhập keyword">
-<button onclick="searchTxt()">Search</button>
+
+<button class="action" onclick="searchTxt()">
+Search
+</button>
+
 <pre id="searchInfo"></pre>
-</div>
 
 </div>
+</div>
+
 </div>
 
 <script>
+
+function showPage(id){
+
+ document.querySelectorAll(".page").forEach(p=>{
+   p.classList.remove("active");
+ });
+
+ document.getElementById(id).classList.add("active");
+}
+
 function download(content,name){
- const blob=new Blob([content],{type:"text/plain"});
- const a=document.createElement("a");
- a.href=URL.createObjectURL(blob);
- a.download=name;
+
+ const blob = new Blob([content], {type:"text/plain"});
+
+ const a = document.createElement("a");
+
+ a.href = URL.createObjectURL(blob);
+
+ a.download = name;
+
  a.click();
 }
 
 async function runFilter(){
+
  const files=document.getElementById("filterFile").files;
- const domains=document.getElementById("domains").value.toLowerCase().split("\n");
+
+ const domains=document.getElementById("domains")
+ .value.toLowerCase().split("\n");
+
  let set=new Set();
- let total=0;
 
  for(const file of files){
+
    const text=await file.text();
+
    const lines=text.split(/\r?\n/);
-   total+=lines.length;
 
    for(const line of lines){
-     const low=line.toLowerCase();
-     if(domains.some(d=>low.includes(d))){
-       const p=line.split(":");
-       if(p.length>=2){
-         set.add(p.slice(-2).join(":"));
-       }
-     }
+
+      const low=line.toLowerCase();
+
+      if(domains.some(d=>low.includes(d))){
+
+         const p=line.split(":");
+
+         if(p.length>=2){
+            set.add(p.slice(-2).join(":"));
+         }
+      }
    }
  }
 
  download([...set].join("\n"),"filtered.txt");
 
  document.getElementById("filterInfo").textContent=
- "Total lines: "+total+"\nFiltered: "+set.size;
+ "Filtered: "+set.size;
 }
 
-async function runSplit(){
- const file=document.getElementById("splitFile").files[0];
- const mode=document.getElementById("splitMode").value;
- const val=parseInt(document.getElementById("splitValue").value);
+function getValue(line,key){
+
+ const regex = new RegExp(key + ":\\s*([^|]+)");
+
+ const match = line.match(regex);
+
+ return match ? match[1].trim() : "";
+}
+
+function getNumber(line,key){
+
+ const value = getValue(line,key);
+
+ const num = parseInt(value);
+
+ return isNaN(num) ? 0 : num;
+}
+
+async function advancedFilter(){
+
+ const file=document.getElementById("advancedFile").files[0];
+
+ if(!file){
+   alert("Chọn file");
+   return;
+ }
 
  const text=await file.text();
+
  const lines=text.split(/\r?\n/);
 
- let chunk=val;
+ const minSkin=parseInt(document.getElementById("skin").value)||0;
+ const minSS=parseInt(document.getElementById("ss").value)||0;
+ const minSSS=parseInt(document.getElementById("sss").value)||0;
+
+ const ban=document.getElementById("ban").value;
+
+ let result=[];
+
+ for(const line of lines){
+
+   const skin=getNumber(line,"Skin");
+   const ss=getNumber(line,"SS");
+   const sss=getNumber(line,"SSS");
+
+   const banValue=getValue(line,"Ban");
+
+   if(skin<minSkin) continue;
+   if(ss<minSS) continue;
+   if(sss<minSSS) continue;
+
+   if(ban && !banValue.includes(ban)) continue;
+
+   result.push(line);
+ }
+
+ download(result.join("\n"),"advanced_filtered.txt");
+
+ document.getElementById("advancedInfo").textContent=
+ "Filtered: "+result.length;
+}
+
+async function splitTxt(){
+
+ const file=document.getElementById("splitFile").files[0];
+
+ const mode=document.getElementById("splitMode").value;
+
+ const value=parseInt(document.getElementById("splitValue").value);
+
+ const text=await file.text();
+
+ const lines=text.split(/\r?\n/);
+
+ let chunk=value;
 
  if(mode==="parts"){
-   chunk=Math.ceil(lines.length/val);
+   chunk=Math.ceil(lines.length/value);
  }
 
  for(let i=0;i<lines.length;i+=chunk){
+
    download(
-    lines.slice(i,i+chunk).join("\n"),
-    "part_"+(Math.floor(i/chunk)+1)+".txt"
+     lines.slice(i,i+chunk).join("\n"),
+     "part_"+(Math.floor(i/chunk)+1)+".txt"
    );
  }
 
@@ -129,19 +387,25 @@ async function runSplit(){
 }
 
 async function convertFormat(){
+
  const file=document.getElementById("convertFile").files[0];
+
  const type=document.getElementById("convertType").value;
 
  const text=await file.text();
+
  const lines=text.split(/\r?\n/);
 
  let out=[];
 
  for(const line of lines){
+
    const p=line.split(":");
+
    if(type==="emailpass" && p.length>=2){
       out.push(p[0]+":"+p[1]);
    }
+
    if(type==="userpass" && p.length>=2){
       out.push(p[p.length-2]+":"+p[p.length-1]);
    }
@@ -154,20 +418,23 @@ async function convertFormat(){
 }
 
 async function searchTxt(){
+
  const file=document.getElementById("searchFile").files[0];
+
  const keyword=document.getElementById("keyword").value.toLowerCase();
 
  const text=await file.text();
 
- const result=text
-   .split(/\r?\n/)
-   .filter(x=>x.toLowerCase().includes(keyword));
+ const result=text.split(/\r?\n/)
+ .filter(x=>x.toLowerCase().includes(keyword));
 
  download(result.join("\n"),"search_result.txt");
 
  document.getElementById("searchInfo").textContent=
  "Found: "+result.length;
 }
+
 </script>
+
 </body>
 </html>
