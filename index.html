@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi TXT Tool</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#0f172a;
+    color:white;
+    margin:0;
+    padding:30px;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+}
+
+.card{
+    background:#1e293b;
+    padding:25px;
+    border-radius:16px;
+    margin-bottom:25px;
+    box-shadow:0 0 15px rgba(0,0,0,.3);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+h2{
+    margin-top:0;
+}
+
+input, button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:10px;
+    border:none;
+    font-size:16px;
+}
+
+button{
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+.status{
+    margin-top:15px;
+    color:#22c55e;
+    word-break:break-word;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Multi TXT Tool</h1>
+
+<div class="card">
+    <h2>1. Garena Filter Tool</h2>
+
+    <p>
+        Lọc các dòng chứa "garena" và xuất user:pass
+    </p>
+
+    <input type="file" id="filterFile" accept=".txt">
+
+    <button onclick="filterGarena()">
+        Bắt Đầu Lọc
+    </button>
+
+    <div class="status" id="filterStatus"></div>
+</div>
+
+<div class="card">
+    <h2>2. TXT Splitter Tool</h2>
+
+    <p>
+        Chia file TXT thành nhiều file nhỏ
+    </p>
+
+    <input type="file" id="splitFile" accept=".txt">
+
+    <input type="number" id="splitCount" placeholder="Nhập số file muốn tách" value="5">
+
+    <button onclick="splitTxtFile()">
+        Bắt Đầu Cắt File
+    </button>
+
+    <div class="status" id="splitStatus"></div>
+</div>
+
+</div>
+
+<script>
+
+function downloadFile(content, filename){
+
+    const blob = new Blob([content], {type:"text/plain"});
+
+    const a = document.createElement("a");
+
+    a.href = URL.createObjectURL(blob);
+
+    a.download = filename;
+
+    a.click();
+}
+
+function filterGarena(){
+
+    const fileInput = document.getElementById("filterFile");
+    const status = document.getElementById("filterStatus");
+
+    if(fileInput.files.length === 0){
+        alert("Vui lòng chọn file TXT");
+        return;
+    }
+
+    const file = fileInput.files[0];
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+        const text = e.target.result;
+
+        const lines = text.split(/\r?\n/);
+
+        let results = [];
+
+        for(let line of lines){
+
+            if(line.toLowerCase().includes("garena")){
+
+                const parts = line.split(":");
+
+                if(parts.length >= 3){
+
+                    const user = parts[parts.length - 2].trim();
+                    const pass = parts[parts.length - 1].trim();
+
+                    if(user && pass){
+                        results.push(user + ":" + pass);
+                    }
+                }
+            }
+        }
+
+        downloadFile(results.join("\n"), "garena_filtered.txt");
+
+        status.innerHTML =
+            "Hoàn thành! Đã lọc " + results.length + " dòng";
+    };
+
+    reader.readAsText(file);
+}
+
+function splitTxtFile(){
+
+    const fileInput = document.getElementById("splitFile");
+    const splitCount = parseInt(document.getElementById("splitCount").value);
+    const status = document.getElementById("splitStatus");
+
+    if(fileInput.files.length === 0){
+        alert("Vui lòng chọn file TXT");
+        return;
+    }
+
+    if(splitCount <= 0){
+        alert("Số file phải lớn hơn 0");
+        return;
+    }
+
+    const file = fileInput.files[0];
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+        const text = e.target.result;
+
+        const lines = text.split(/\r?\n/);
+
+        const perFile = Math.ceil(lines.length / splitCount);
+
+        for(let i = 0; i < splitCount; i++){
+
+            const start = i * perFile;
+            const end = start + perFile;
+
+            const chunk = lines.slice(start, end).join("\n");
+
+            downloadFile(
+                chunk,
+                "split_part_" + (i + 1) + ".txt"
+            );
+        }
+
+        status.innerHTML =
+            "Hoàn thành! Đã tách thành " + splitCount + " file";
+    };
+
+    reader.readAsText(file);
+}
+
+</script>
+
+</body>
+</html>
