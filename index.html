@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🔑 Password Variant Tool PRO v3.0 by @teddyvrp</title>
+  <title>🔑 Password Variant Tool PRO by @teddyvrp</title>
   <style>
     * {
       margin: 0;
@@ -20,7 +20,7 @@
     }
 
     .container {
-      max-width: 1600px;
+      max-width: 1200px;
       margin: 0 auto;
       background: #fff;
       padding: 30px;
@@ -50,57 +50,6 @@
       margin-bottom: 20px;
       font-size: 13px;
       color: #1565c0;
-    }
-
-    .auth-section {
-      background: #fff3cd;
-      border: 2px solid #ffc107;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .auth-section input {
-      padding: 8px 12px;
-      border: 1px solid #ffc107;
-      border-radius: 6px;
-      font-size: 13px;
-    }
-
-    .auth-section button {
-      padding: 8px 16px;
-      background: #ffc107;
-      color: #000;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-
-    .auth-section button:hover {
-      background: #e0a800;
-    }
-
-    .license-badge {
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .license-demo {
-      background: #ff9800;
-      color: white;
-    }
-
-    .license-full {
-      background: #4caf50;
-      color: white;
     }
 
     .file-upload {
@@ -150,8 +99,6 @@
       gap: 10px;
       margin: 20px 0;
       border-bottom: 2px solid #eee;
-      flex-wrap: wrap;
-      overflow-x: auto;
     }
 
     .tab-btn {
@@ -163,7 +110,6 @@
       font-weight: 600;
       border-bottom: 3px solid transparent;
       transition: all 0.3s ease;
-      white-space: nowrap;
     }
 
     .tab-btn.active {
@@ -177,36 +123,6 @@
 
     .tab-content.active {
       display: block;
-    }
-
-    .preset-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 10px;
-      margin: 20px 0;
-    }
-
-    .preset-btn {
-      padding: 12px;
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      background: #fff;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      text-align: center;
-      font-size: 13px;
-    }
-
-    .preset-btn:hover {
-      border-color: #667eea;
-      background: #f0f2f5;
-    }
-
-    .preset-btn.active {
-      background: #667eea;
-      color: white;
-      border-color: #667eea;
     }
 
     .search-box {
@@ -223,14 +139,14 @@
       font-size: 14px;
     }
 
-    .rules-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 15px;
+    .rules {
       margin: 20px 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
     }
 
-    .rule-card {
+    .rule-group {
       padding: 15px;
       background: linear-gradient(135deg, #f5f7fa 0%, #f9fafb 100%);
       border-radius: 10px;
@@ -238,25 +154,26 @@
       transition: all 0.3s ease;
     }
 
-    .rule-card:hover {
+    .rule-group:hover {
       border-color: #667eea;
       box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
     }
 
-    .rule-card > h4 {
+    .rule-group > label {
       font-weight: 600;
+      display: block;
       margin-bottom: 10px;
       color: #667eea;
       font-size: 14px;
     }
 
-    .rule-items {
+    .subrules {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
     }
 
-    .rule-item {
+    .subrules label {
       display: inline-flex;
       align-items: center;
       padding: 6px 10px;
@@ -269,18 +186,18 @@
       user-select: none;
     }
 
-    .rule-item:hover {
+    .subrules label:hover {
       border-color: #667eea;
       background: #f0f2f5;
     }
 
-    .rule-item input[type="checkbox"] {
+    .subrules input[type="checkbox"] {
       margin-right: 6px;
       cursor: pointer;
       accent-color: #667eea;
     }
 
-    .rule-item:has(input[type="checkbox"]:checked) {
+    .subrules label:has(input[type="checkbox"]:checked) {
       background: #e3f2fd;
       color: #667eea;
       border-color: #667eea;
@@ -306,23 +223,15 @@
     }
 
     .setting-item input,
-    .setting-item select,
-    .setting-item textarea {
+    .setting-item select {
       padding: 10px;
       border: 1px solid #ddd;
       border-radius: 6px;
       font-size: 14px;
-      font-family: "Courier New", monospace;
-    }
-
-    .setting-item textarea {
-      resize: vertical;
-      min-height: 80px;
     }
 
     .setting-item input:focus,
-    .setting-item select:focus,
-    .setting-item textarea:focus {
+    .setting-item select:focus {
       outline: none;
       border-color: #667eea;
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -367,8 +276,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
     }
 
     .count {
@@ -377,29 +284,6 @@
       padding: 4px 12px;
       border-radius: 20px;
       font-size: 12px;
-      font-weight: 600;
-    }
-
-    .stats-row {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
-    }
-
-    .stat-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 12px;
-      color: #666;
-    }
-
-    .stat-badge {
-      background: #e3f2fd;
-      color: #667eea;
-      padding: 2px 8px;
-      border-radius: 4px;
       font-weight: 600;
     }
 
@@ -548,12 +432,8 @@
         padding: 20px;
       }
 
-      .rules-container {
+      .rules {
         grid-template-columns: 1fr;
-      }
-
-      .preset-grid {
-        grid-template-columns: repeat(2, 1fr);
       }
 
       h2 {
@@ -581,20 +461,11 @@
 </head>
 <body>
   <div class="container">
-    <h2>🔑 Password Variant Tool PRO v3.0</h2>
-    <p class="subtitle">Made with ❤️ by @teddyvrp | 200+ Advanced Mutations</p>
-
-    <!-- License/Auth Section -->
-    <div class="auth-section">
-      <span>🔐 License:</span>
-      <input type="text" id="licenseKey" placeholder="Nhập license key (hoặc dùng DEMO-2026)">
-      <button onclick="verifyLicense()">🔓 Unlock</button>
-      <span class="license-badge license-demo" id="licenseBadge">DEMO MODE</span>
-      <small style="flex: 100%; color: #666;">Max 50k variants (Demo) | Nhập DEMO-2026 để dùng full 10M</small>
-    </div>
+    <h2>🔑 Password Variant Tool PRO</h2>
+    <p class="subtitle">Made with ❤️ by @teddyvrp | Multi-Stage Mutation Engine</p>
 
     <div class="info-box">
-      📌 Upload file <code>username:password</code>, chọn preset/rules, rồi generate variants
+      📌 Upload file <code>username:password</code>, chọn rules, thiết lập depth, rồi generate variants
     </div>
 
     <div class="file-upload" id="uploadArea">
@@ -603,95 +474,36 @@
     </div>
 
     <div class="tabs">
-      <button class="tab-btn active" data-tab="presets">🎮 Presets (10+)</button>
-      <button class="tab-btn" data-tab="numbers">🔢 Numbers</button>
-      <button class="tab-btn" data-tab="letters">🔤 Letters</button>
-      <button class="tab-btn" data-tab="special">✨ Special Chars</button>
-      <button class="tab-btn" data-tab="vietnamese">🇻🇳 Vietnamese</button>
-      <button class="tab-btn" data-tab="mutations">🔄 Mutations</button>
-      <button class="tab-btn" data-tab="patterns">📊 Patterns</button>
-      <button class="tab-btn" data-tab="advanced">⚡ Advanced</button>
-      <button class="tab-btn" data-tab="custom">✏️ Custom</button>
-      <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
+      <button class="tab-btn active" onclick="switchTab('basic')">⚡ Basic Rules</button>
+      <button class="tab-btn" onclick="switchTab('advanced')">🔧 Advanced Mutations</button>
+      <button class="tab-btn" onclick="switchTab('settings')">⚙️ Settings</button>
     </div>
 
-    <!-- Presets Tab -->
-    <div id="presets" class="tab-content active">
-      <h3>🎮 Chọn Preset Phù Hợp</h3>
-      <div class="preset-grid" id="presetGrid"></div>
-    </div>
-
-    <!-- Numbers Tab -->
-    <div id="numbers" class="tab-content">
-      <h3>🔢 Number Rules (Thêm số sau password)</h3>
-      <div class="rules-container" id="numbersContainer"></div>
-    </div>
-
-    <!-- Letters Tab -->
-    <div id="letters" class="tab-content">
-      <h3>🔤 Letter Rules (Biến đổi chữ cái)</h3>
-      <div class="rules-container" id="lettersContainer"></div>
-    </div>
-
-    <!-- Special Chars Tab -->
-    <div id="special" class="tab-content">
-      <h3>✨ Special Characters (Thêm ký tự đặc biệt)</h3>
-      <div class="rules-container" id="specialContainer"></div>
-    </div>
-
-    <!-- Vietnamese Tab -->
-    <div id="vietnamese" class="tab-content">
-      <h3>🇻🇳 Vietnamese Rules (Mẹo Việt Nam)</h3>
-      <div class="rules-container" id="vietnameseContainer"></div>
-    </div>
-
-    <!-- Mutations Tab -->
-    <div id="mutations" class="tab-content">
-      <h3>🔄 Advanced Mutations (Thay đổi cấu trúc)</h3>
-      <div class="rules-container" id="mutationsContainer"></div>
-    </div>
-
-    <!-- Patterns Tab -->
-    <div id="patterns" class="tab-content">
-      <h3>📊 Pattern Generator (Kết hợp nhiều thành phần)</h3>
-      <div class="rules-container" id="patternsContainer"></div>
+    <!-- Basic Tab -->
+    <div id="basic" class="tab-content active">
+      <div class="search-box">
+        <input type="text" id="searchBasic" placeholder="🔍 Tìm rules..." onkeyup="filterRules('basic')">
+      </div>
+      <div class="rules" id="basicRulesContainer"></div>
+      <div class="button-group">
+        <button id="generateBasicBtn" class="btn btn-primary" onclick="generateVariants('basic')" disabled>
+          ⚡ Tạo Variants (Basic)
+        </button>
+        <button id="clearBasicBtn" class="btn btn-secondary" onclick="clearAll()" disabled>
+          🗑️ Xóa Tất Cả
+        </button>
+      </div>
     </div>
 
     <!-- Advanced Tab -->
     <div id="advanced" class="tab-content">
-      <h3>⚡ Advanced Rules (Mẹo khác)</h3>
-      <div class="rules-container" id="advancedContainer"></div>
-    </div>
-
-    <!-- Custom Tab -->
-    <div id="custom" class="tab-content">
-      <div class="settings-grid">
-        <div class="setting-item">
-          <label>📝 Custom Rules (mỗi dòng 1 rule)</label>
-          <textarea id="customRulesInput" placeholder="+123&#10;+2025&#10;+vip&#10;prefix pro_&#10;replace a @&#10;reverse&#10;double"></textarea>
-          <small style="color: #999; margin-top: 5px;">Format: +suffix | prefix + | replace X Y | reverse | double | delete | swap | duplicate | keyboard</small>
-        </div>
-
-        <div class="setting-item">
-          <label>🎯 Pattern Generator</label>
-          <textarea id="patternInput" placeholder="{base}123&#10;{base}@{year}&#10;{user}_{base}&#10;{base}!{num}"></textarea>
-          <small style="color: #999; margin-top: 5px;">{base}=password | {user}=username | {year}=năm | {num}=123</small>
-        </div>
-
-        <div class="setting-item">
-          <label>📊 Entropy Threshold</label>
-          <select id="entropyThreshold">
-            <option value="low">🔴 Low (≥ 0.3)</option>
-            <option value="medium" selected>🟡 Medium (≥ 0.5)</option>
-            <option value="high">🟢 High (≥ 0.7)</option>
-          </select>
-          <small style="color: #999; margin-top: 5px;">Lọc variants theo độ phức tạp</small>
-        </div>
+      <div class="search-box">
+        <input type="text" id="searchAdvanced" placeholder="🔍 Tìm rules..." onkeyup="filterRules('advanced')">
       </div>
-
+      <div class="rules" id="advancedRulesContainer"></div>
       <div class="button-group">
-        <button class="btn btn-primary" onclick="generateVariants('custom')" id="generateCustomBtn" disabled>
-          ✏️ Tạo Variants (Custom)
+        <button id="generateAdvBtn" class="btn btn-primary" onclick="generateVariants('advanced')" disabled>
+          ⚡ Tạo Variants (Advanced + Chain)
         </button>
       </div>
     </div>
@@ -711,7 +523,7 @@
         </div>
         <div class="setting-item">
           <label for="maxResults">🎯 Max Results</label>
-          <input type="number" id="maxResults" min="1000" value="50000">
+          <input type="number" id="maxResults" min="1000" max="1000000" value="100000">
           <small style="color: #999; margin-top: 5px;">Giới hạn variants tạo ra</small>
         </div>
         <div class="setting-item">
@@ -739,16 +551,6 @@
       <span>📋 Kết Quả (Preview 1000 dòng đầu)</span>
       <span class="count"><span id="count">0</span> / <span id="totalCount">0</span></span>
     </h3>
-
-    <div class="stats-row">
-      <div class="stat-item">
-        Entropy: <span class="stat-badge" id="entropyLabel">N/A</span>
-      </div>
-      <div class="stat-item">
-        Độ phức tạp: <span class="stat-badge" id="complexityLabel">N/A</span>
-      </div>
-    </div>
-
     <div id="output">Chưa có dữ liệu. Vui lòng tải file lên.</div>
 
     <div class="button-group">
@@ -761,258 +563,180 @@
       <button id="stopBtn" class="btn btn-secondary" onclick="stopProcessing()" style="display: none;">
         ⏹️ Stop
       </button>
-      <button id="clearBtn" class="btn btn-secondary" onclick="clearAll()" disabled>
-        🗑️ Xóa Tất Cả
-      </button>
     </div>
   </div>
 
   <footer>
-    🚀 Password Variant Generator PRO v3.0 | © 2026 teddyvrp | 200+ Rules
+    🚀 Password Variant Generator PRO | © 2026 teddyvrp | Multi-Stage Mutation Engine
   </footer>
 
 <script>
 // ============================================
-// EXTENDED RULES DATABASE
+// CONFIG & CONSTANTS
 // ============================================
+const MAX_LENGTH = 18;
+const RULES_CONFIG = [
+  {
+    id: 1,
+    name: "Viết thường/hoa/chữ cái đầu",
+    rules: [
+      { id: "1a", label: "Viết thường" },
+      { id: "1b", label: "Viết hoa" },
+      { id: "1c", label: "Hoa chữ cái đầu (tìm chữ cái đầu tiên)" }
+    ]
+  },
+  {
+    id: 2,
+    name: "Thêm số phổ biến",
+    rules: [
+      { id: "2a", label: "+123" },
+      { id: "2b", label: "+1234" },
+      { id: "2c", label: "+1111" },
+      { id: "2d", label: "+9999" }
+    ]
+  },
+  {
+    id: 3,
+    name: "Thêm năm",
+    rules: [
+      { id: "3a", label: "+1990" },
+      { id: "3b", label: "+2000" },
+      { id: "3c", label: "+2020" },
+      { id: "3d", label: "+90" },
+      { id: "3e", label: "+95" }
+    ]
+  },
+  {
+    id: 4,
+    name: "Thêm ký tự đặc biệt",
+    rules: [
+      { id: "4a", label: "+@" },
+      { id: "4b", label: "+@@" },
+      { id: "4c", label: "+!" }
+    ]
+  },
+  {
+    id: 5,
+    name: "Hậu tố kiểu Việt",
+    rules: [
+      { id: "5a", label: "+vip" },
+      { id: "5b", label: "+pro" },
+      { id: "5c", label: "+cute" },
+      { id: "5d", label: "+love" },
+      { id: "5e", label: "+baby" }
+    ]
+  },
+  {
+    id: 6,
+    name: "Chuyển sang leet",
+    rules: [
+      { id: "6a", label: "a→@" },
+      { id: "6b", label: "o→0" },
+      { id: "6c", label: "i→1" },
+      { id: "6d", label: "e→3" }
+    ]
+  },
+  {
+    id: 7,
+    name: "Thêm dấu phân cách",
+    rules: [
+      { id: "7a", label: "_" },
+      { id: "7b", label: "-" },
+      { id: "7c", label: "." }
+    ]
+  },
+  {
+    id: 8,
+    name: "Đảo ngược chuỗi",
+    rules: [
+      { id: "8a", label: "Reverse" }
+    ]
+  },
+  {
+    id: 9,
+    name: "Nhân đôi mật khẩu",
+    rules: [
+      { id: "9a", label: "Double" }
+    ]
+  },
+  {
+    id: 10,
+    name: "Biến đổi từ username",
+    rules: [
+      { id: "10a", label: "+123" },
+      { id: "10b", label: "+@" },
+      { id: "10c", label: "+1999" }
+    ]
+  }
+];
 
-const DYNAMIC_RULES = {
-  // Number Suffixes
-  numbers: [
-    { id: "num0", value: "0", weight: 85, category: "Single Digit" },
-    { id: "num1", value: "1", weight: 85, category: "Single Digit" },
-    { id: "num2", value: "2", weight: 80, category: "Single Digit" },
-    { id: "num3", value: "3", weight: 80, category: "Single Digit" },
-    { id: "num5", value: "5", weight: 75, category: "Single Digit" },
-    { id: "num8", value: "8", weight: 75, category: "Single Digit" },
-    { id: "num9", value: "9", weight: 80, category: "Single Digit" },
-    
-    { id: "num12", value: "12", weight: 90, category: "Double Digit" },
-    { id: "num21", value: "21", weight: 88, category: "Double Digit" },
-    { id: "num99", value: "99", weight: 85, category: "Double Digit" },
-    { id: "num00", value: "00", weight: 80, category: "Double Digit" },
-    
-    { id: "num123", value: "123", weight: 95, category: "Triple Digit" },
-    { id: "num1234", value: "1234", weight: 90, category: "Triple Digit" },
-    { id: "num12345", value: "12345", weight: 85, category: "Triple Digit" },
-    { id: "num111", value: "111", weight: 82, category: "Triple Digit" },
-    { id: "num222", value: "222", weight: 80, category: "Triple Digit" },
-    { id: "num333", value: "333", weight: 78, category: "Triple Digit" },
-    { id: "num1111", value: "1111", weight: 75, category: "Repeat" },
-    { id: "num9999", value: "9999", weight: 70, category: "Repeat" },
-    { id: "num666", value: "666", weight: 72, category: "Repeat" },
-    { id: "num888", value: "888", weight: 70, category: "Repeat" },
-  ],
+const VN_SUFFIXES = [
+  "123", "1234", "2024", "@123", "@@@",
+  "cute", "vip", "pro", "yeuem", "hihi", "kaka", "123456"
+];
 
-  // Letter Transformations
-  letters: [
-    { id: "lower", value: "lowercase", weight: 90, category: "Case" },
-    { id: "upper", value: "UPPERCASE", weight: 85, category: "Case" },
-    { id: "capitalize", value: "Capitalize", weight: 80, category: "Case" },
-    { id: "invert", value: "InVeRt CaSe", weight: 60, category: "Case" },
-    
-    { id: "leet_a", value: "a→@", weight: 75, category: "Leet Speak" },
-    { id: "leet_o", value: "o→0", weight: 75, category: "Leet Speak" },
-    { id: "leet_e", value: "e→3", weight: 70, category: "Leet Speak" },
-    { id: "leet_i", value: "i→1", weight: 70, category: "Leet Speak" },
-    { id: "leet_s", value: "s→$", weight: 65, category: "Leet Speak" },
-    { id: "leet_t", value: "t→7", weight: 60, category: "Leet Speak" },
-    { id: "leet_l", value: "l→1", weight: 65, category: "Leet Speak" },
-    
-    { id: "partial_leet", value: "Partial Leet", weight: 70, category: "Advanced" },
-  ],
-
-  // Special Characters
-  special: [
-    { id: "sp@", value: "@", weight: 85, category: "Common" },
-    { id: "sp!", value: "!", weight: 80, category: "Common" },
-    { id: "sp#", value: "#", weight: 75, category: "Common" },
-    { id: "sp$", value: "$", weight: 70, category: "Common" },
-    { id: "sp%", value: "%", weight: 65, category: "Common" },
-    { id: "sp^", value: "^", weight: 60, category: "Common" },
-    { id: "sp&", value: "&", weight: 60, category: "Common" },
-    { id: "sp*", value: "*", weight: 65, category: "Common" },
-    
-    { id: "sp@@", value: "@@", weight: 72, category: "Double" },
-    { id: "sp!!", value: "!!", weight: 65, category: "Double" },
-    { id: "sp##", value: "##", weight: 60, category: "Double" },
-    
-    { id: "sp_", value: "_", weight: 80, category: "Separator" },
-    { id: "sp-", value: "-", weight: 78, category: "Separator" },
-    { id: "sp.", value: ".", weight: 75, category: "Separator" },
-    { id: "sp,", value: ",", weight: 70, category: "Separator" },
-  ],
-
-  // Vietnamese Rules
-  vietnamese: [
-    { id: "vn_vip", value: "vip", weight: 88, category: "Common" },
-    { id: "vn_pro", value: "pro", weight: 85, category: "Common" },
-    { id: "vn_cute", value: "cute", weight: 80, category: "Common" },
-    { id: "vn_love", value: "love", weight: 78, category: "Common" },
-    { id: "vn_baby", value: "baby", weight: 75, category: "Common" },
-    { id: "vn_xinh", value: "xinh", weight: 82, category: "Beauty" },
-    { id: "vn_dep", value: "dep", weight: 80, category: "Beauty" },
-    { id: "vn_yeuem", value: "yeuem", weight: 70, category: "Teen" },
-    { id: "vn_anhyeu", value: "anhyeu", weight: 65, category: "Teen" },
-    { id: "vn_em", value: "em", weight: 60, category: "Teen" },
-    
-    { id: "vn_123a", value: "123a", weight: 72, category: "Mix" },
-    { id: "vn_matkhau", value: "matkhau", weight: 75, category: "Tech" },
-    { id: "vn_password", value: "password", weight: 70, category: "Tech" },
-    { id: "vn_123khong", value: "123khong", weight: 60, category: "Mix" },
-    
-    { id: "vn_admin", value: "admin", weight: 85, category: "Business" },
-    { id: "vn_master", value: "master", weight: 80, category: "Business" },
-    { id: "vn_access", value: "access", weight: 75, category: "Business" },
-    { id: "vn_unlimited", value: "unlimited", weight: 70, category: "Business" },
-  ],
-
-  // Mutations
-  mutations: [
-    { id: "mut_reverse", value: "Reverse", weight: 50, category: "Structure" },
-    { id: "mut_double", value: "Double", weight: 45, category: "Structure" },
-    { id: "mut_delete", value: "Delete Char", weight: 55, category: "Structure" },
-    { id: "mut_swap", value: "Swap Adjacent", weight: 50, category: "Structure" },
-    { id: "mut_duplicate", value: "Duplicate Char", weight: 52, category: "Structure" },
-    { id: "mut_keyboard", value: "Keyboard Typo", weight: 60, category: "Structure" },
-    { id: "mut_leetfull", value: "Full Leet", weight: 65, category: "Leet" },
-  ],
-
-  // Pattern Combinations
-  patterns: [
-    { id: "pat_base_num", value: "{base}123", weight: 95, category: "Simple" },
-    { id: "pat_base_year", value: "{base}{year}", weight: 92, category: "Simple" },
-    { id: "pat_base_special", value: "{base}!", weight: 90, category: "Simple" },
-    { id: "pat_base_special_num", value: "{base}@123", weight: 88, category: "Combo" },
-    { id: "pat_user_base", value: "{user}{base}", weight: 85, category: "Username" },
-    { id: "pat_base_user", value: "{base}{user}", weight: 80, category: "Username" },
-    { id: "pat_user_underscore_base", value: "{user}_{base}", weight: 82, category: "Separator" },
-    { id: "pat_num_base_num", value: "{num}{base}{num2}", weight: 75, category: "Sandwich" },
-  ],
-
-  // Advanced Tricks
-  advanced: [
-    { id: "adv_year_2024", value: "2024", weight: 91, category: "Year" },
-    { id: "adv_year_2025", value: "2025", weight: 92, category: "Year" },
-    { id: "adv_year_2020", value: "2020", weight: 85, category: "Year" },
-    { id: "adv_year_2000", value: "2000", weight: 88, category: "Year" },
-    { id: "adv_year_1990", value: "1990", weight: 80, category: "Year" },
-    { id: "adv_year_99", value: "99", weight: 75, category: "Year" },
-    { id: "adv_year_95", value: "95", weight: 70, category: "Year" },
-    
-    { id: "adv_month_01", value: "01", weight: 70, category: "Date" },
-    { id: "adv_month_12", value: "12", weight: 70, category: "Date" },
-    
-    { id: "adv_prefix_admin", value: "admin_", weight: 80, category: "Prefix" },
-    { id: "adv_prefix_pro", value: "pro_", weight: 75, category: "Prefix" },
-    { id: "adv_prefix_my", value: "my", weight: 70, category: "Prefix" },
-    
-    { id: "adv_mixed_case", value: "MiXeD CaSe", weight: 55, category: "Case" },
-  ],
+const LEET_MAP = {
+  a: ["@", "4"],
+  o: ["0"],
+  s: ["$", "5"],
+  e: ["3"],
+  i: ["1"],
+  t: ["7"]
 };
 
-// Preset Configurations
-const PRESETS = {
-  facebook: {
-    name: "🔵 Facebook",
-    rules: ["num123", "num1234", "lower", "sp@", "vn_vip"],
-    description: "Facebook users"
-  },
-  gmail: {
-    name: "📧 Gmail",
-    rules: ["num123", "lower", "leet_a", "leet_o", "capitalize"],
-    description: "Gmail format"
-  },
-  vietnamese: {
-    name: "🇻🇳 Vietnamese",
-    rules: ["vn_vip", "vn_cute", "num123", "vn_xinh", "capitalize"],
-    description: "Mẹo Việt Nam"
-  },
-  gamer: {
-    name: "🎮 Gamer",
-    rules: ["num666", "num888", "upper", "sp@", "mut_leetfull"],
-    description: "Gamer style"
-  },
-  teen: {
-    name: "👦 Teen",
-    rules: ["vn_yeuem", "num123", "vn_cute", "capitalize"],
-    description: "Teen Việt"
-  },
-  business: {
-    name: "💼 Business",
-    rules: ["adv_year_2025", "sp@", "adv_prefix_admin", "upper"],
-    description: "Business class"
-  },
-  instagram: {
-    name: "📷 Instagram",
-    rules: ["num123", "leet_a", "sp.", "vn_cute", "capitalize"],
-    description: "Instagram users"
-  },
-  zalo: {
-    name: "💬 Zalo",
-    rules: ["vn_pro", "num123", "vn_love", "sp_", "lower"],
-    description: "Zalo users"
-  },
-  bank: {
-    name: "🏦 Bank",
-    rules: ["num1234", "upper", "sp@", "capitalize"],
-    description: "Banking"
-  },
-  tiktok: {
-    name: "🎵 TikTok",
-    rules: ["num123", "vn_xinh", "sp!", "lower"],
-    description: "TikTok users"
-  },
-  extreme: {
-    name: "⚡ Extreme",
-    rules: ["num1234", "upper", "leet_a", "leet_o", "sp@", "sp!"],
-    description: "Max complexity"
-  },
-  simple: {
-    name: "🟢 Simple",
-    rules: ["num123", "lower", "capitalize"],
-    description: "Most common"
-  },
-};
+const KEYBOARD_WALKS = [
+  "qwerty", "asdfgh", "zxcvbn",
+  "qazwsx", "qweasd", "123456"
+];
 
 let lastResult = "";
 let allResults = new Map();
 let lastData = null;
 let isProcessing = false;
 let shouldStop = false;
-let licenseMode = "demo";
-let maxVariantsLimit = 50000;
 
 // ============================================
 // UTILITY FUNCTIONS
 // ============================================
 
-function calculateEntropy(str) {
-  if (!str) return 0;
-  const freq = {};
-  for (const char of str) {
-    freq[char] = (freq[char] || 0) + 1;
-  }
-  let entropy = 0;
-  for (const count of Object.values(freq)) {
-    const p = count / str.length;
-    entropy -= p * Math.log2(p);
-  }
-  return entropy / 8;
+function removeAccents(str) {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-function getEntropyLevel(entropy) {
-  if (entropy >= 0.7) return "high";
-  if (entropy >= 0.5) return "medium";
-  return "low";
+function tokenize(pwd) {
+  return pwd.match(/[A-Za-z]+|\d+|[^A-Za-z0-9]/g) || [];
 }
 
 function validVariant(variant, original) {
   if (!variant) return false;
+  // ✅ FIX: Case-sensitive compare (do not lowercase)
   if (variant === original) return false;
-  if (variant.length > 18) return false;
-  if (/^(.)\1+$/.test(variant)) return false;
+  if (variant.length > MAX_LENGTH) return false;
+  if (hasEntropyIssue(variant)) return false;
   return true;
+}
+
+/**
+ * ✅ FIX: Better entropy check
+ * Detects: aaaa, 1111, abcabc, 123123, qwertyqwerty
+ */
+function hasEntropyIssue(str) {
+  // Single char repeat
+  if (/^(.)\1+$/.test(str)) return true;
+  
+  // Pattern repeat (abcabc, 123123)
+  for (let len = 1; len <= str.length / 2; len++) {
+    const pattern = str.substring(0, len);
+    let expected = "";
+    for (let i = 0; i < str.length; i += len) {
+      expected += pattern;
+    }
+    if (str === expected.substring(0, str.length) && str.length >= len * 2) {
+      return true;
+    }
+  }
+  
+  return false;
 }
 
 function showToast(message, type = "info") {
@@ -1020,6 +744,7 @@ function showToast(message, type = "info") {
   toast.className = `toast ${type}`;
   toast.textContent = message;
   document.body.appendChild(toast);
+
   setTimeout(() => {
     toast.classList.add("hide");
     setTimeout(() => toast.remove(), 300);
@@ -1033,112 +758,272 @@ function updateProgress(current, total) {
 }
 
 // ============================================
-// LICENSE SYSTEM
+// TRANSFORMATION RULES
 // ============================================
 
-function verifyLicense() {
-  const key = document.getElementById("licenseKey").value.trim();
-  if (key === "DEMO-2026") {
-    licenseMode = "full";
-    maxVariantsLimit = 10000000;
-    document.getElementById("licenseBadge").className = "license-badge license-full";
-    document.getElementById("licenseBadge").textContent = "FULL MODE ✓";
-    document.getElementById("maxResults").max = "10000000";
-    document.getElementById("maxResults").value = "100000";
-    showToast("✅ Unlocked Full Mode!", "success");
-  } else if (key === "") {
-    licenseMode = "demo";
-    maxVariantsLimit = 50000;
-    document.getElementById("licenseBadge").className = "license-badge license-demo";
-    document.getElementById("licenseBadge").textContent = "DEMO MODE";
-    document.getElementById("maxResults").max = "50000";
-    document.getElementById("maxResults").value = "50000";
-    showToast("📌 Demo Mode - Max 50k variants", "info");
-  } else {
-    showToast("❌ License key không hợp lệ", "error");
-  }
-  updateButtonStates();
+function rule_1a(t) {
+  return [t.join("").toLowerCase()];
 }
 
+function rule_1b(t) {
+  return [t.join("").toUpperCase()];
+}
+
+/**
+ * ✅ FIX: Rule 1c - Capitalize first letter, keep rest as-is
+ */
+function rule_1c(t) {
+  const str = t.join("");
+  let firstLetterIndex = -1;
+  
+  for (let i = 0; i < str.length; i++) {
+    if (/[a-zA-Z]/.test(str[i])) {
+      firstLetterIndex = i;
+      break;
+    }
+  }
+
+  if (firstLetterIndex === -1) return [];
+
+  const result =
+    str.substring(0, firstLetterIndex) +
+    str[firstLetterIndex].toUpperCase() +
+    str.substring(firstLetterIndex + 1);
+
+  return [result];
+}
+
+function rule_2a(t) { return [t.join("") + "123"]; }
+function rule_2b(t) { return [t.join("") + "1234"]; }
+function rule_2c(t) { return [t.join("") + "1111"]; }
+function rule_2d(t) { return [t.join("") + "9999"]; }
+
+function rule_3a(t) { return [t.join("") + "1990"]; }
+function rule_3b(t) { return [t.join("") + "2000"]; }
+function rule_3c(t) { return [t.join("") + "2020"]; }
+function rule_3d(t) { return [t.join("") + "90"]; }
+function rule_3e(t) { return [t.join("") + "95"]; }
+
+function rule_4a(t) { return [t.join("") + "@"]; }
+function rule_4b(t) { return [t.join("") + "@@"]; }
+function rule_4c(t) { return [t.join("") + "!"]; }
+
+function rule_5a(t) { return [t.join("") + "vip"]; }
+function rule_5b(t) { return [t.join("") + "pro"]; }
+function rule_5c(t) { return [t.join("") + "cute"]; }
+function rule_5d(t) { return [t.join("") + "love"]; }
+function rule_5e(t) { return [t.join("") + "baby"]; }
+
+function rule_6a(t) { return [t.join("").replace(/[aA]/g, "@")]; }
+function rule_6b(t) { return [t.join("").replace(/[oO]/g, "0")]; }
+function rule_6c(t) { return [t.join("").replace(/[iI]/g, "1")]; }
+function rule_6d(t) { return [t.join("").replace(/[eE]/g, "3")]; }
+
+/**
+ * ✅ FIX: More flexible separator patterns
+ */
+function rule_7a(t) {
+  const w = t.join("");
+  const patterns = [
+    /^([A-Za-z]+)(\d+)$/,
+    /^(\d+)([A-Za-z]+)$/,
+    /([A-Za-z]+)(\d+)(?=[^A-Za-z0-9]|$)/
+  ];
+  
+  for (const pattern of patterns) {
+    const m = w.match(pattern);
+    if (m) {
+      const letters = m[1] && /[a-zA-Z]/.test(m[1]) ? m[1] : m[2];
+      const digits = m[1] && /\d/.test(m[1]) ? m[2] : m[1];
+      return [letters + "_" + digits];
+    }
+  }
+  return [];
+}
+
+function rule_7b(t) {
+  const w = t.join("");
+  const patterns = [
+    /^([A-Za-z]+)(\d+)$/,
+    /^(\d+)([A-Za-z]+)$/,
+    /([A-Za-z]+)(\d+)(?=[^A-Za-z0-9]|$)/
+  ];
+  
+  for (const pattern of patterns) {
+    const m = w.match(pattern);
+    if (m) {
+      const letters = m[1] && /[a-zA-Z]/.test(m[1]) ? m[1] : m[2];
+      const digits = m[1] && /\d/.test(m[1]) ? m[2] : m[1];
+      return [letters + "-" + digits];
+    }
+  }
+  return [];
+}
+
+function rule_7c(t) {
+  const w = t.join("");
+  const patterns = [
+    /^([A-Za-z]+)(\d+)$/,
+    /^(\d+)([A-Za-z]+)$/,
+    /([A-Za-z]+)(\d+)(?=[^A-Za-z0-9]|$)/
+  ];
+  
+  for (const pattern of patterns) {
+    const m = w.match(pattern);
+    if (m) {
+      const letters = m[1] && /[a-zA-Z]/.test(m[1]) ? m[1] : m[2];
+      const digits = m[1] && /\d/.test(m[1]) ? m[2] : m[1];
+      return [letters + "." + digits];
+    }
+  }
+  return [];
+}
+
+function rule_8a(t) {
+  return [t.join("").split("").reverse().join("")];
+}
+
+/**
+ * ✅ FIX: Check length before doubling
+ */
+function rule_9a(t) {
+  const w = t.join("");
+  if ((w.length * 2) > MAX_LENGTH) return [];
+  return [w + w];
+}
+
+/**
+ * ✅ FIX: Rule 10 uses username, not password
+ */
+function rule_10a(user) {
+  const base = user.split("@")[0];
+  return base ? [base + "123"] : [];
+}
+
+function rule_10b(user) {
+  const base = user.split("@")[0];
+  return base ? [base + "@"] : [];
+}
+
+function rule_10c(user) {
+  const base = user.split("@")[0];
+  return base ? [base + "1999"] : [];
+}
+
+const RULES_MAP = {
+  "1a": rule_1a, "1b": rule_1b, "1c": rule_1c,
+  "2a": rule_2a, "2b": rule_2b, "2c": rule_2c, "2d": rule_2d,
+  "3a": rule_3a, "3b": rule_3b, "3c": rule_3c, "3d": rule_3d, "3e": rule_3e,
+  "4a": rule_4a, "4b": rule_4b, "4c": rule_4c,
+  "5a": rule_5a, "5b": rule_5b, "5c": rule_5c, "5d": rule_5d, "5e": rule_5e,
+  "6a": rule_6a, "6b": rule_6b, "6c": rule_6c, "6d": rule_6d,
+  "7a": rule_7a, "7b": rule_7b, "7c": rule_7c,
+  "8a": rule_8a,
+  "9a": rule_9a,
+  "10a": rule_10a, "10b": rule_10b, "10c": rule_10c
+};
+
 // ============================================
-// APPLY RULES
+// ADVANCED MUTATIONS
 // ============================================
 
-function applyRule(base, rule) {
-  try {
-    const val = rule.value;
+/**
+ * ✅ FIX: Full recursive leet mutations using DFS
+ */
+function mutateWord(word) {
+  const results = new Set();
+  
+  function helper(str, index) {
+    results.add(str);
     
-    if (val === "lowercase") return [base.toLowerCase()];
-    if (val === "UPPERCASE") return [base.toUpperCase()];
-    if (val === "Capitalize") return [base.charAt(0).toUpperCase() + base.slice(1).toLowerCase()];
-    if (val === "InVeRt CaSe") {
-      let result = "";
-      for (const c of base) {
-        result += c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase();
-      }
-      return [result];
-    }
-    
-    // Leet
-    if (val === "a→@") return [base.replace(/a/gi, "@")];
-    if (val === "o→0") return [base.replace(/o/gi, "0")];
-    if (val === "e→3") return [base.replace(/e/gi, "3")];
-    if (val === "i→1") return [base.replace(/i/gi, "1")];
-    if (val === "s→$") return [base.replace(/s/gi, "$")];
-    if (val === "t→7") return [base.replace(/t/gi, "7")];
-    if (val === "l→1") return [base.replace(/l/gi, "1")];
-    
-    // Mutations
-    if (val === "Reverse") return [base.split("").reverse().join("")];
-    if (val === "Double") {
-      if (base.length * 2 > 18) return [];
-      return [base + base];
-    }
-    if (val === "Delete Char") {
-      const results = [];
-      for (let i = 0; i < base.length; i++) {
-        results.push(base.substring(0, i) + base.substring(i + 1));
-      }
-      return results;
-    }
-    if (val === "Swap Adjacent") {
-      const results = [];
-      for (let i = 0; i < base.length - 1; i++) {
-        results.push(base.substring(0, i) + base[i + 1] + base[i] + base.substring(i + 2));
-      }
-      return results;
-    }
-    if (val === "Duplicate Char") {
-      const results = [];
-      for (let i = 0; i < base.length; i++) {
-        if (base.length + 1 <= 18) {
-          results.push(base.substring(0, i) + base[i] + base[i] + base.substring(i + 1));
+    for (let i = index; i < str.length; i++) {
+      const c = str[i].toLowerCase();
+      
+      if (LEET_MAP[c]) {
+        for (const rep of LEET_MAP[c]) {
+          helper(
+            str.substring(0, i) + rep + str.substring(i + 1),
+            i + 1
+          );
         }
       }
-      return results;
     }
-    if (val === "Keyboard Typo") {
-      const keyboard = {
-        'q': 'w', 'w': 'q', 'e': 'r', 'r': 'e', 't': 'y', 'y': 't',
-        'a': 's', 's': 'a', 'd': 'f', 'f': 'd', 'g': 'h', 'h': 'g',
-        'z': 'x', 'x': 'z', 'c': 'v', 'v': 'c', 'b': 'n', 'n': 'b'
-      };
-      const results = [];
-      for (let i = 0; i < base.length; i++) {
-        const char = base[i].toLowerCase();
-        if (keyboard[char]) {
-          results.push(base.substring(0, i) + keyboard[char] + base.substring(i + 1));
-        }
-      }
-      return results;
-    }
-    
-    // Default suffix
-    const result = base + val;
-    return validVariant(result, base) ? [result] : [];
-  } catch (e) {
-    return [];
   }
+  
+  helper(word, 0);
+  return Array.from(results);
+}
+
+/**
+ * ✅ FIX: Smart username extraction with number/camelCase support
+ */
+function extractUsernameVariants(user) {
+  const base = user.split("@")[0];
+  const results = new Set();
+  
+  results.add(base);
+  
+  // Split by separators
+  const parts = base.split(/[\.\_\-\d]/);
+  for (const p of parts) {
+    if (p.length >= 3) {
+      results.add(p);
+    }
+  }
+  
+  // Extract year if exists
+  const yearMatch = base.match(/\d{4}/);
+  if (yearMatch) {
+    results.add(base.replace(yearMatch[0], ""));
+  }
+  
+  return Array.from(results);
+}
+
+/**
+ * ✅ FIX: Chain rules with proper limit
+ */
+async function applyRuleChain(base, user, selectedRules, depth, limit) {
+  const results = new Set([base]);
+  let currentLayer = [base];
+  
+  for (let layer = 0; layer < depth; layer++) {
+    if (isProcessing === false) break;
+    
+    const nextLayer = new Set();
+    
+    for (const pwd of currentLayer) {
+      const tokens = tokenize(pwd);
+      
+      for (const ruleId of selectedRules) {
+        if (results.size >= limit) break;
+        
+        const ruleFn = RULES_MAP[ruleId];
+        if (!ruleFn) continue;
+        
+        try {
+          const variants = ruleId.startsWith("10") ? ruleFn(user) : ruleFn(tokens);
+          const variantsArray = Array.isArray(variants) ? variants : [variants];
+          
+          for (const v of variantsArray) {
+            if (results.size >= limit) break;
+            if (validVariant(v, base)) {
+              results.add(v);
+              nextLayer.add(v);
+            }
+          }
+        } catch (e) {
+          console.error(`Error in rule ${ruleId}:`, e);
+        }
+      }
+    }
+    
+    currentLayer = Array.from(nextLayer);
+    if (currentLayer.length === 0) break;
+  }
+  
+  results.delete(base);
+  return Array.from(results);
 }
 
 // ============================================
@@ -1146,109 +1031,84 @@ function applyRule(base, rule) {
 // ============================================
 
 function initializeUI() {
-  initializePresets();
-  initializeRulesByCategory();
-}
-
-function initializePresets() {
-  const grid = document.getElementById("presetGrid");
-  grid.innerHTML = "";
-  for (const [key, preset] of Object.entries(PRESETS)) {
-    const btn = document.createElement("button");
-    btn.className = "preset-btn";
-    btn.dataset.preset = key;
-    btn.innerHTML = `${preset.name}<br><small>${preset.description}</small>`;
-    btn.onclick = () => applyPreset(key);
-    grid.appendChild(btn);
-  }
-}
-
-function applyPreset(presetKey) {
-  const preset = PRESETS[presetKey];
-  document.querySelectorAll(".rule-item input:checked").forEach(c => c.checked = false);
+  const basicContainer = document.getElementById("basicRulesContainer");
+  const advancedContainer = document.getElementById("advancedRulesContainer");
   
-  preset.rules.forEach(ruleId => {
-    const checkbox = document.querySelector(`input[value="${ruleId}"]`);
-    if (checkbox) checkbox.checked = true;
+  basicContainer.innerHTML = "";
+  advancedContainer.innerHTML = "";
+  
+  RULES_CONFIG.forEach((group) => {
+    // Basic tab
+    const groupDiv1 = createRuleGroup(group, "basic");
+    basicContainer.appendChild(groupDiv1);
+    
+    // Advanced tab
+    const groupDiv2 = createRuleGroup(group, "advanced");
+    advancedContainer.appendChild(groupDiv2);
+  });
+}
+
+function createRuleGroup(group, tab) {
+  const groupDiv = document.createElement("div");
+  groupDiv.className = "rule-group";
+  groupDiv.dataset.group = group.name;
+  
+  const label = document.createElement("label");
+  label.textContent = group.name;
+  groupDiv.appendChild(label);
+  
+  const subrules = document.createElement("div");
+  subrules.className = "subrules";
+  
+  group.rules.forEach((rule) => {
+    const ruleLabel = document.createElement("label");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.value = rule.id;
+    checkbox.dataset.tab = tab;
+    checkbox.addEventListener("change", updateButtonStates);
+    
+    ruleLabel.appendChild(checkbox);
+    ruleLabel.appendChild(document.createTextNode(rule.label));
+    subrules.appendChild(ruleLabel);
   });
   
-  document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active"));
-  document.querySelector(`[data-preset="${presetKey}"]`).classList.add("active");
-  
-  updateButtonStates();
-  showToast(`✅ Applied: ${preset.name}`, "success");
-}
-
-function initializeRulesByCategory() {
-  for (const [category, rules] of Object.entries(DYNAMIC_RULES)) {
-    const container = document.getElementById(`${category}Container`);
-    if (!container) continue;
-    
-    container.innerHTML = "";
-    
-    // Group by subcategory
-    const grouped = {};
-    rules.forEach(rule => {
-      if (!grouped[rule.category]) grouped[rule.category] = [];
-      grouped[rule.category].push(rule);
-    });
-    
-    // Sort
-    for (const cat in grouped) {
-      grouped[cat].sort((a, b) => b.weight - a.weight);
-    }
-    
-    // Create cards
-    Object.entries(grouped).forEach(([subcat, subrules]) => {
-      const card = document.createElement("div");
-      card.className = "rule-card";
-      
-      const title = document.createElement("h4");
-      title.textContent = `${subcat} (${subrules.length})`;
-      card.appendChild(title);
-      
-      const items = document.createElement("div");
-      items.className = "rule-items";
-      
-      subrules.forEach(rule => {
-        const label = document.createElement("label");
-        label.className = "rule-item";
-        
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.value = rule.id;
-        checkbox.addEventListener("change", updateButtonStates);
-        
-        const text = document.createElement("span");
-        text.textContent = `${rule.value} [${rule.weight}]`;
-        
-        label.appendChild(checkbox);
-        label.appendChild(text);
-        items.appendChild(label);
-      });
-      
-      card.appendChild(items);
-      container.appendChild(card);
-    });
-  }
+  groupDiv.appendChild(subrules);
+  return groupDiv;
 }
 
 function updateButtonStates() {
   const hasFile = lastData !== null;
-  const hasRules = document.querySelectorAll(".rule-item input:checked").length > 0;
+  const hasBasicRules = document.querySelectorAll('#basicRulesContainer input:checked').length > 0;
+  const hasAdvRules = document.querySelectorAll('#advancedRulesContainer input:checked').length > 0;
   
-  document.getElementById("generateCustomBtn").disabled = !hasFile;
+  document.getElementById("generateBasicBtn").disabled = !hasFile || !hasBasicRules;
+  document.getElementById("generateAdvBtn").disabled = !hasFile || !hasAdvRules;
+  document.getElementById("clearBasicBtn").disabled = lastResult === "";
   document.getElementById("downloadBtn").disabled = lastResult === "";
   document.getElementById("copyBtn").disabled = lastResult === "";
-  document.getElementById("clearBtn").disabled = lastResult === "";
 }
 
-function switchTab(event) {
-  const tabName = event.target.dataset.tab;
+function switchTab(tab) {
   document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
   document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
-  document.getElementById(tabName).classList.add("active");
+  
+  document.getElementById(tab).classList.add("active");
   event.target.classList.add("active");
+}
+
+function filterRules(tab) {
+  const search = document.getElementById(`search${tab.charAt(0).toUpperCase() + tab.slice(1)}`).value.toLowerCase();
+  const container = document.getElementById(`${tab}RulesContainer`);
+  
+  container.querySelectorAll(".rule-group").forEach(group => {
+    const name = group.dataset.group.toLowerCase();
+    const visible = name.includes(search) || 
+                   Array.from(group.querySelectorAll("label")).some(l => 
+                     l.textContent.toLowerCase().includes(search)
+                   );
+    group.style.display = visible ? "" : "none";
+  });
 }
 
 // ============================================
@@ -1260,13 +1120,16 @@ function setupFileUpload() {
   const uploadArea = document.getElementById("uploadArea");
   
   fileInput.addEventListener("change", handleFileSelect);
+  
   uploadArea.addEventListener("dragover", (e) => {
     e.preventDefault();
     uploadArea.style.background = "#f0f2f5";
   });
+  
   uploadArea.addEventListener("dragleave", () => {
     uploadArea.style.background = "";
   });
+  
   uploadArea.addEventListener("drop", (e) => {
     e.preventDefault();
     uploadArea.style.background = "";
@@ -1284,66 +1147,77 @@ function handleFileSelect() {
   const reader = new FileReader();
   reader.onload = (e) => {
     const content = e.target.result;
-    lastData = content.split("\n")
-      .map(line => line.trim())
-      .filter(line => line.includes(":"))
-      .map(line => {
-        const colonIndex = line.indexOf(":");
-        return {
-          user: line.substring(0, colonIndex).trim(),
-          pass: line.substring(colonIndex + 1).trim()
-        };
-      })
-      .filter(x => x && x.user && x.pass);
-    
+    lastData = parseFileContent(content);
     updateButtonStates();
-    showToast(`✅ Tải ${lastData.length} cặp thành công!`, "success");
+    showToast(`✅ Tải ${lastData.length} cặp dữ liệu thành công!`, "success");
+  };
+  reader.onerror = () => {
+    showToast("❌ Lỗi khi đọc file", "error");
   };
   reader.readAsText(file, "utf-8");
 }
 
+/**
+ * ✅ FIX: Parse with proper colon handling
+ */
+function parseFileContent(content) {
+  return content
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && line.includes(":"))
+    .map(line => {
+      const colonIndex = line.indexOf(":");
+      if (colonIndex === -1) return null;
+      return {
+        user: line.substring(0, colonIndex).trim(),
+        pass: line.substring(colonIndex + 1).trim()
+      };
+    })
+    .filter(x => x && x.user && x.pass);
+}
+
 // ============================================
-// GENERATE VARIANTS
+// PROCESSING
 // ============================================
 
 async function generateVariants(mode) {
   if (!lastData || lastData.length === 0) {
-    showToast("❌ Vui lòng tải file!", "error");
+    showToast("❌ Vui lòng tải file trước!", "error");
     return;
   }
   
+  // ✅ FIX: Race condition prevention
   if (isProcessing) return;
   isProcessing = true;
   shouldStop = false;
   
-  document.getElementById("generateCustomBtn").disabled = true;
+  document.getElementById("generateBasicBtn").disabled = true;
+  document.getElementById("generateAdvBtn").disabled = true;
   document.getElementById("stopBtn").style.display = "inline-flex";
   document.getElementById("progressSection").classList.add("active");
   
+  const selector = mode === "basic" ? "#basicRulesContainer" : "#advancedRulesContainer";
+  const chosen = Array.from(document.querySelectorAll(`${selector} input:checked`))
+    .map((c) => c.value);
+  
+  if (chosen.length === 0) {
+    showToast("❌ Vui lòng chọn ít nhất một quy tắc!", "error");
+    isProcessing = false;
+    document.getElementById("generateBasicBtn").disabled = false;
+    document.getElementById("generateAdvBtn").disabled = false;
+    document.getElementById("stopBtn").style.display = "none";
+    document.getElementById("progressSection").classList.remove("active");
+    return;
+  }
+  
   allResults.clear();
   const chunkSize = parseInt(document.getElementById("chunkSize").value);
-  let maxResults = Math.min(parseInt(document.getElementById("maxResults").value), maxVariantsLimit);
+  const maxResults = parseInt(document.getElementById("maxResults").value);
+  const depth = mode === "advanced" ? parseInt(document.getElementById("mutationDepth").value) : 1;
   
   let totalProcessed = 0;
-  let entropies = [];
   
   try {
-    const chosenRules = Array.from(document.querySelectorAll('.rule-item input:checked'))
-      .map(c => c.value)
-      .map(id => {
-        for (const rules of Object.values(DYNAMIC_RULES)) {
-          const rule = rules.find(r => r.id === id);
-          if (rule) return rule;
-        }
-        return null;
-      })
-      .filter(r => r);
-    
-    if (chosenRules.length === 0) {
-      showToast("❌ Chọn ít nhất 1 rule!", "error");
-      throw new Error("No rules");
-    }
-
     for (let i = 0; i < lastData.length; i += chunkSize) {
       if (!isProcessing || shouldStop) break;
       
@@ -1353,20 +1227,41 @@ async function generateVariants(mode) {
         if (!isProcessing || shouldStop) break;
         if (allResults.size >= maxResults) break;
         
-        const origPass = item.pass;
+        const origPass = item.pass; // Keep original (don't removeAccents)
         const user = item.user;
         
-        for (const rule of chosenRules) {
-          if (allResults.size >= maxResults) break;
+        if (mode === "basic") {
+          // Single layer direct rules
+          const tokens = tokenize(origPass);
+          for (const ruleId of chosen) {
+            if (allResults.size >= maxResults) break;
+            
+            const ruleFn = RULES_MAP[ruleId];
+            if (!ruleFn) continue;
+            
+            try {
+              const variants = ruleId.startsWith("10") ? ruleFn(user) : ruleFn(tokens);
+              const variantsArray = Array.isArray(variants) ? variants : [variants];
+              
+              for (const v of variantsArray) {
+                if (allResults.size >= maxResults) break;
+                if (validVariant(v, origPass)) {
+                  const key = `${user.toLowerCase()}:${v}`;
+                  allResults.set(key, true);
+                }
+              }
+            } catch (e) {
+              console.error(e);
+            }
+          }
+        } else {
+          // Advanced mode with chain
+          const variants = await applyRuleChain(origPass, user, chosen, depth, maxResults);
           
-          const variants = applyRule(origPass, rule);
           for (const v of variants) {
             if (allResults.size >= maxResults) break;
-            if (validVariant(v, origPass)) {
-              const key = `${user.toLowerCase()}:${v}`;
-              allResults.set(key, true);
-              entropies.push(calculateEntropy(v));
-            }
+            const key = `${user.toLowerCase()}:${v}`;
+            allResults.set(key, true);
           }
         }
         
@@ -1377,35 +1272,39 @@ async function generateVariants(mode) {
       await new Promise(r => setTimeout(r, 0));
     }
     
-    displayResults(entropies);
-    showToast(`✅ Tạo ${allResults.size} variants!`, "success");
+    displayResults();
+    showToast(
+      `✅ Tạo ${allResults.size} variants từ ${totalProcessed} cặp!`,
+      "success"
+    );
   } catch (e) {
     console.error(e);
-    showToast("❌ Lỗi!", "error");
+    showToast("❌ Lỗi khi xử lý!", "error");
   } finally {
     isProcessing = false;
     shouldStop = false;
-    document.getElementById("generateCustomBtn").disabled = false;
+    document.getElementById("generateBasicBtn").disabled = false;
+    document.getElementById("generateAdvBtn").disabled = false;
     document.getElementById("stopBtn").style.display = "none";
     document.getElementById("progressSection").classList.remove("active");
     updateButtonStates();
   }
 }
 
-function displayResults(entropies = []) {
-  const items = Array.from(allResults.keys()).slice(0, 1000);
-  lastResult = items.join("\n");
+function displayResults() {
+  const previewLines = 1000;
+  const items = Array.from(allResults.keys()).slice(0, previewLines);
   
-  document.getElementById("output").textContent = lastResult || "No results.";
+  // ✅ FIX: Efficient string building
+  let output = "";
+  for (const item of items) {
+    output += item + "\n";
+  }
+  
+  lastResult = output;
+  document.getElementById("output").textContent = output || "Không có kết quả.";
   document.getElementById("count").textContent = items.length;
   document.getElementById("totalCount").textContent = allResults.size;
-  
-  if (entropies.length > 0) {
-    const avgEntropy = entropies.reduce((a, b) => a + b, 0) / entropies.length;
-    const lvl = getEntropyLevel(avgEntropy);
-    document.getElementById("entropyLabel").textContent = avgEntropy.toFixed(2);
-    document.getElementById("complexityLabel").textContent = lvl.toUpperCase();
-  }
 }
 
 function stopProcessing() {
@@ -1414,15 +1313,16 @@ function stopProcessing() {
 }
 
 // ============================================
-// EXPORT
+// EXPORT FUNCTIONS
 // ============================================
 
 function downloadResults() {
   if (allResults.size === 0) return;
   
   const format = document.getElementById("exportFormat").value;
-  const items = Array.from(allResults.keys());
   let content, filename, type;
+  
+  const items = Array.from(allResults.keys());
   
   if (format === "csv") {
     content = "username,password\n" + items.map(line => {
@@ -1456,15 +1356,22 @@ function downloadResults() {
   link.click();
   
   setTimeout(() => URL.revokeObjectURL(url), 100);
-  showToast("✅ Downloaded!", "success");
+  showToast("✅ Tải file thành công!", "success");
 }
 
 function copyToClipboard() {
   if (!lastResult) return;
+  
   navigator.clipboard.writeText(lastResult).then(() => {
-    showToast("✅ Copied!", "success");
+    showToast("✅ Đã copy vào clipboard!", "success");
   }).catch(() => {
-    showToast("❌ Copy failed!", "error");
+    // Fallback for older browsers
+    try {
+      document.execCommand("copy");
+      showToast("✅ Đã copy vào clipboard!", "success");
+    } catch (e) {
+      showToast("❌ Lỗi khi copy!", "error");
+    }
   });
 }
 
@@ -1473,28 +1380,25 @@ function clearAll() {
   allResults.clear();
   lastData = null;
   document.getElementById("fileInput").value = "";
-  document.querySelectorAll(".rule-item input:checked").forEach(c => c.checked = false);
-  document.getElementById("output").textContent = "No data.";
+  document.querySelectorAll(".rules input:checked").forEach((c) => {
+    c.checked = false;
+  });
+  document.getElementById("output").textContent = "Chưa có dữ liệu. Vui lòng tải file lên.";
   document.getElementById("count").textContent = "0";
   document.getElementById("totalCount").textContent = "0";
   document.getElementById("progressBar").style.width = "0%";
   updateButtonStates();
-  showToast("🗑️ Cleared!", "info");
+  showToast("🗑️ Đã xóa tất cả dữ liệu!", "info");
 }
 
 // ============================================
-// INIT
+// INITIALIZATION
 // ============================================
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeUI();
   setupFileUpload();
   updateButtonStates();
-  verifyLicense();
-  
-  document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", switchTab);
-  });
 });
 </script>
 
