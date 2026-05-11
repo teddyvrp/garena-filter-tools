@@ -4,37 +4,89 @@
   <meta charset="UTF-8">
   <title>Password Variant Tool</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    .rules { margin: 10px 0; }
-    .rules label { display: block; margin: 3px 0; }
-    #output { white-space: pre; background: #f4f4f4; padding: 10px; margin-top: 15px; }
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 40px;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #0078d7;
+    }
+    .file-upload {
+      text-align: center;
+      margin: 20px 0;
+    }
+    input[type="file"] {
+      padding: 10px;
+      border: 2px dashed #0078d7;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #f9f9f9;
+    }
+    .rules {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin: 20px 0;
+    }
+    .rules label {
+      background: #f4f4f4;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #output {
+      white-space: pre;
+      background: #fafafa;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      margin-top: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .count {
+      font-weight: bold;
+      color: #0078d7;
+    }
   </style>
 </head>
 <body>
-  <h2>Tool sinh biến thể mật khẩu</h2>
+  <div class="container">
+    <h2>🔑 Password Variant Tool</h2>
 
-  <p>Chọn file dữ liệu dạng <code>username:password</code> (mỗi dòng một cặp):</p>
-  <input type="file" id="fileInput" />
+    <div class="file-upload">
+      <p>Chọn file dữ liệu dạng <code>username:password</code> (mỗi dòng một cặp):</p>
+      <input type="file" id="fileInput" />
+    </div>
 
-  <div class="rules">
-    <h3>Chọn rule:</h3>
-    <label><input type="checkbox" value="1"> 1. Viết thường/hoa/chữ cái đầu</label>
-    <label><input type="checkbox" value="2"> 2. Thêm số phổ biến</label>
-    <label><input type="checkbox" value="3"> 3. Thêm năm</label>
-    <label><input type="checkbox" value="4"> 4. Thêm ký tự đặc biệt (@, @@, !)</label>
-    <label><input type="checkbox" value="5"> 5. Hậu tố kiểu Việt (vip, pro, cute…)</label>
-    <label><input type="checkbox" value="6"> 6. Chuyển sang leet (a→@, o→0…)</label>
-    <label><input type="checkbox" value="7"> 7. Thêm dấu phân cách (abc123 → abc_123…)</label>
-    <label><input type="checkbox" value="8"> 8. Đảo ngược chuỗi</label>
-    <label><input type="checkbox" value="9"> 9. Nhân đôi mật khẩu</label>
-    <label><input type="checkbox" value="10"> 10. Biến đổi từ username (thêm 123, @, 1999)</label>
+    <div class="rules">
+      <label><input type="checkbox" value="1" checked> 1. Viết thường/hoa/chữ cái đầu</label>
+      <label><input type="checkbox" value="2" checked> 2. Thêm số phổ biến</label>
+      <label><input type="checkbox" value="3"> 3. Thêm năm</label>
+      <label><input type="checkbox" value="4"> 4. Thêm ký tự đặc biệt</label>
+      <label><input type="checkbox" value="5"> 5. Hậu tố kiểu Việt</label>
+      <label><input type="checkbox" value="6"> 6. Chuyển sang leet</label>
+      <label><input type="checkbox" value="7"> 7. Thêm dấu phân cách</label>
+      <label><input type="checkbox" value="8"> 8. Đảo ngược chuỗi</label>
+      <label><input type="checkbox" value="9"> 9. Nhân đôi mật khẩu</label>
+      <label><input type="checkbox" value="10"> 10. Biến đổi từ username</label>
+    </div>
+
+    <h3>Kết quả (<span id="count">0</span> dòng):</h3>
+    <div id="output">Chưa có dữ liệu.</div>
   </div>
-
-  <button onclick="runTool()">Tạo kết quả</button>
-  <button onclick="downloadResult()">Download kết quả</button>
-
-  <h3>Kết quả (<span id="count">0</span> dòng):</h3>
-  <div id="output"></div>
 
 <script>
 const MAX_LEN = 18;
@@ -86,62 +138,53 @@ const RULES_MAP = {
   "10": rule_username
 };
 
-function runTool() {
-  const fileInput = document.getElementById("fileInput");
-  if (!fileInput.files.length) {
-    alert("Vui lòng chọn file dữ liệu!");
-    return;
-  }
-  const chosen = Array.from(document.querySelectorAll(".rules input:checked")).map(c=>c.value);
-
+document.getElementById("fileInput").addEventListener("change", function(){
+  const file = this.files[0];
+  if (!file) return;
   const reader = new FileReader();
   reader.onload = function(e) {
-    let lines = e.target.result.split("\n").map(l=>l.trim()).filter(l=>l.length>0);
-    let results = new Set();
+    processFile(e.target.result);
+  };
+  reader.readAsText(file, "utf-8");
+});
 
-    for (let line of lines) {
-      if (!line.includes(":")) continue;
-      let parts = line.split(":");
-      let user = parts[0].trim();
-      let pwd = parts.slice(1).join(":").trim(); // giữ nguyên phần password kể cả có dấu :
-      pwd = removeAccents(pwd);
-      if (!pwd) continue;
-      let tokens = tokenize(pwd);
+function processFile(content) {
+  let lines = content.split("\n").map(l=>l.trim()).filter(l=>l.length>0);
+  let results = new Set();
+  const chosen = Array.from(document.querySelectorAll(".rules input:checked")).map(c=>c.value);
 
-      for (let rid of chosen) {
-        let variants;
-        if (rid==="10") {
-          variants = RULES_MAP[rid](user);
-        } else {
-          variants = RULES_MAP[rid](tokens);
-        }
-        if (!Array.isArray(variants)) variants=[variants];
-        for (let v of variants) {
-          if (validVariant(v,pwd)) {
-            results.add(user+":"+v);
-          }
-        }
+  for (let line of lines) {
+    if (!line.includes(":")) continue;
+    let parts = line.split(":");
+    let user = parts[0].trim();
+    let pwd = parts.slice(1).join(":").trim();
+    pwd = removeAccents(pwd);
+    if (!pwd) continue;
+    let tokens = tokenize(pwd);
+
+    for (let rid of chosen) {
+      let variants = RULES_MAP[rid](rid==="10"?user:tokens);
+      if (!Array.isArray(variants)) variants=[variants];
+      for (let v of variants) {
+        if (validVariant(v,pwd)) results.add(user+":"+v);
       }
     }
-    lastResult = Array.from(results).join("\n");
-    document.getElementById("output").textContent = lastResult || "Không có kết quả.";
-    document.getElementById("count").textContent = results.size;
-  };
-  reader.readAsText(fileInput.files[0], "utf-8");
-}
-
-function downloadResult() {
-  if (!lastResult) {
-    alert("Chưa có kết quả để tải!");
-    return;
   }
-  const blob = new Blob([lastResult], {type: "text/plain"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "ket_qua.txt";
-  a.click();
-  URL.revokeObjectURL(url);
+
+  lastResult = Array.from(results).join("\n");
+  document.getElementById("output").textContent = lastResult || "Không có kết quả.";
+  document.getElementById("count").textContent = results.size;
+
+  // Auto download
+  if (lastResult) {
+    const blob = new Blob([lastResult], {type: "text/plain"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ket_qua.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 }
 </script>
 </body>
