@@ -99,6 +99,7 @@
       gap: 10px;
       margin: 20px 0;
       border-bottom: 2px solid #eee;
+      flex-wrap: wrap;
     }
 
     .tab-btn {
@@ -110,6 +111,7 @@
       font-weight: 600;
       border-bottom: 3px solid transparent;
       transition: all 0.3s ease;
+      font-size: 14px;
     }
 
     .tab-btn.active {
@@ -223,15 +225,23 @@
     }
 
     .setting-item input,
-    .setting-item select {
+    .setting-item select,
+    .setting-item textarea {
       padding: 10px;
       border: 1px solid #ddd;
       border-radius: 6px;
       font-size: 14px;
+      font-family: "Courier New", monospace;
+    }
+
+    .setting-item textarea {
+      resize: vertical;
+      min-height: 80px;
     }
 
     .setting-item input:focus,
-    .setting-item select:focus {
+    .setting-item select:focus,
+    .setting-item textarea:focus {
       outline: none;
       border-color: #667eea;
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -427,6 +437,32 @@
       padding-top: 20px;
     }
 
+    .mini-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      background: #667eea;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mini-btn:hover {
+      background: #764ba2;
+      transform: scale(1.05);
+    }
+
+    .stats-box {
+      background: #f0f7ff;
+      border-left: 4px solid #667eea;
+      padding: 12px 15px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      color: #333;
+    }
+
     @media (max-width: 768px) {
       .container {
         padding: 20px;
@@ -456,6 +492,11 @@
       .tabs {
         flex-wrap: wrap;
       }
+
+      .tab-btn {
+        font-size: 12px;
+        padding: 10px 15px;
+      }
     }
   </style>
 </head>
@@ -475,7 +516,8 @@
 
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('basic')">⚡ Basic Rules</button>
-      <button class="tab-btn" onclick="switchTab('advanced')">🔧 Advanced Mutations</button>
+      <button class="tab-btn" onclick="switchTab('advanced')">🔧 Advanced</button>
+      <button class="tab-btn" onclick="switchTab('custom')">✏️ Custom Patterns</button>
       <button class="tab-btn" onclick="switchTab('settings')">⚙️ Settings</button>
     </div>
 
@@ -508,6 +550,27 @@
       </div>
     </div>
 
+    <!-- Custom Patterns Tab -->
+    <div id="custom" class="tab-content">
+      <div class="setting-item">
+        <label for="customSuffixes">🔤 Custom Suffixes (mỗi dòng một từ)</label>
+        <textarea id="customSuffixes" placeholder="vd:&#10;_2024&#10;.pro&#10;@vip&#10;-love"></textarea>
+      </div>
+      <div class="setting-item">
+        <label for="customPrefixes">🔤 Custom Prefixes (mỗi dòng một từ)</label>
+        <textarea id="customPrefixes" placeholder="vd:&#10;vn_&#10;_2024&#10;@admin"></textarea>
+      </div>
+      <div class="setting-item">
+        <label for="customSeparators">🔤 Custom Separators (mỗi dòng một ký tự)</label>
+        <textarea id="customSeparators" placeholder="vd:&#10;_&#10;.&#10;-&#10;#"></textarea>
+      </div>
+      <div class="button-group">
+        <button class="btn btn-primary" onclick="generateVariants('custom')">
+          ⚡ Tạo từ Custom Patterns
+        </button>
+      </div>
+    </div>
+
     <!-- Settings Tab -->
     <div id="settings" class="tab-content">
       <div class="settings-grid">
@@ -534,6 +597,12 @@
             <option value="json">JSON (object)</option>
           </select>
         </div>
+      </div>
+      <div class="stats-box">
+        📊 <strong>Thống kê:</strong><br>
+        Tệp: <span id="statsFile">0</span> cặp | 
+        Variants: <span id="statsVariants">0</span> | 
+        Ratio: <span id="statsRatio">0x</span>
       </div>
     </div>
 
@@ -567,112 +636,155 @@
   </div>
 
   <footer>
-    🚀 Password Variant Generator PRO | © 2026 teddyvrp | Multi-Stage Mutation Engine
+    🚀 Password Variant Generator PRO | © 2026 teddyvrp | Multi-Stage Mutation Engine v2.0
   </footer>
 
 <script>
 // ============================================
 // CONFIG & CONSTANTS
 // ============================================
-const MAX_LENGTH = 18;
+const MAX_LENGTH = 20;
+
 const RULES_CONFIG = [
   {
     id: 1,
-    name: "Viết thường/hoa/chữ cái đầu",
+    name: "📝 Viết thường/hoa/Capitalize",
     rules: [
-      { id: "1a", label: "Viết thường" },
-      { id: "1b", label: "Viết hoa" },
-      { id: "1c", label: "Hoa chữ cái đầu (tìm chữ cái đầu tiên)" }
+      { id: "1a", label: "Viết thường (lowercase)" },
+      { id: "1b", label: "Viết hoa (UPPERCASE)" },
+      { id: "1c", label: "Hoa đầu tiên (Capitalize)" }
     ]
   },
   {
     id: 2,
-    name: "Thêm số phổ biến",
+    name: "🔢 Thêm số phổ biến",
     rules: [
       { id: "2a", label: "+123" },
       { id: "2b", label: "+1234" },
-      { id: "2c", label: "+1111" },
-      { id: "2d", label: "+9999" }
+      { id: "2c", label: "+12345" },
+      { id: "2d", label: "+123456" },
+      { id: "2e", label: "+1234567" },
+      { id: "2f", label: "+12345678" },
+      { id: "2g", label: "+123456789" }
     ]
   },
   {
     id: 3,
-    name: "Thêm năm",
+    name: "📅 Thêm năm phổ biến",
     rules: [
       { id: "3a", label: "+1990" },
       { id: "3b", label: "+2000" },
-      { id: "3c", label: "+2020" },
-      { id: "3d", label: "+90" },
-      { id: "3e", label: "+95" }
+      { id: "3c", label: "+2010" },
+      { id: "3d", label: "+2020" },
+      { id: "3e", label: "+2024" },
+      { id: "3f", label: "+90" },
+      { id: "3g", label: "+95" }
     ]
   },
   {
     id: 4,
-    name: "Thêm ký tự đặc biệt",
+    name: "🔣 Thêm ký tự đặc biệt",
     rules: [
       { id: "4a", label: "+@" },
       { id: "4b", label: "+@@" },
-      { id: "4c", label: "+!" }
+      { id: "4c", label: "+!" },
+      { id: "4d", label: "+!!" },
+      { id: "4e", label: "+#" },
+      { id: "4f", label: "+$" }
     ]
   },
   {
     id: 5,
-    name: "Hậu tố kiểu Việt",
+    name: "🎯 Hậu tố kiểu Việt",
     rules: [
       { id: "5a", label: "+vip" },
       { id: "5b", label: "+pro" },
       { id: "5c", label: "+cute" },
       { id: "5d", label: "+love" },
-      { id: "5e", label: "+baby" }
+      { id: "5e", label: "+baby" },
+      { id: "5f", label: "+hihi" },
+      { id: "5g", label: "+kaka" }
     ]
   },
   {
     id: 6,
-    name: "Chuyển sang leet",
+    name: "💠 Chuyển sang LEET speak",
     rules: [
       { id: "6a", label: "a→@" },
       { id: "6b", label: "o→0" },
       { id: "6c", label: "i→1" },
-      { id: "6d", label: "e→3" }
+      { id: "6d", label: "e→3" },
+      { id: "6e", label: "s→$" },
+      { id: "6f", label: "t→7" }
     ]
   },
   {
     id: 7,
-    name: "Thêm dấu phân cách",
+    name: "➖ Thêm dấu phân cách",
     rules: [
-      { id: "7a", label: "_" },
-      { id: "7b", label: "-" },
-      { id: "7c", label: "." }
+      { id: "7a", label: "chèn _" },
+      { id: "7b", label: "chèn -" },
+      { id: "7c", label: "chèn ." }
     ]
   },
   {
     id: 8,
-    name: "Đảo ngược chuỗi",
+    name: "🔄 Đảo ngược",
     rules: [
-      { id: "8a", label: "Reverse" }
+      { id: "8a", label: "Reverse toàn bộ" },
+      { id: "8b", label: "Reverse chữ, giữ số" }
     ]
   },
   {
     id: 9,
-    name: "Nhân đôi mật khẩu",
+    name: "📦 Nhân đôi & Lặp lại",
     rules: [
-      { id: "9a", label: "Double" }
+      { id: "9a", label: "Double (xxx→xxxxx)" },
+      { id: "9b", label: "+Pass 2x" }
     ]
   },
   {
     id: 10,
-    name: "Biến đổi từ username",
+    name: "👤 Từ Username",
     rules: [
-      { id: "10a", label: "+123" },
-      { id: "10b", label: "+@" },
-      { id: "10c", label: "+1999" }
+      { id: "10a", label: "User+123" },
+      { id: "10b", label: "User+@" },
+      { id: "10c", label: "User+1999" },
+      { id: "10d", label: "User@123" }
+    ]
+  },
+  {
+    id: 11,
+    name: "🔗 Ghép & Biến đổi",
+    rules: [
+      { id: "11a", label: "Thêm số cuối (111→1111)" },
+      { id: "11b", label: "Thêm số đầu (111→1111)" },
+      { id: "11c", label: "CamelCase (hello→Hello)" }
+    ]
+  },
+  {
+    id: 12,
+    name: "☎️ Biến đổi số điện thoại",
+    rules: [
+      { id: "12a", label: "SĐT+@" },
+      { id: "12b", label: "SĐT+123" },
+      { id: "12c", label: "SĐT+vip" }
     ]
   }
 ];
 
 const VN_SUFFIXES = [
-  "123", "1234", "2024", "@123", "@@@",
-  "cute", "vip", "pro", "yeuem", "hihi", "kaka", "123456"
+  "123", "1234", "12345", "123456", "2024", "@", "@@", "@123",
+  "vip", "pro", "cute", "love", "hihi", "kaka", "baby",
+  "999", "888", "777"
+];
+
+const VN_PREFIXES = [
+  "vn_", "_", "admin_", "user_", "test_"
+];
+
+const VN_SEPARATORS = [
+  "_", "-", ".", "#", "@", "$"
 ];
 
 const LEET_MAP = {
@@ -683,11 +795,6 @@ const LEET_MAP = {
   i: ["1"],
   t: ["7"]
 };
-
-const KEYBOARD_WALKS = [
-  "qwerty", "asdfgh", "zxcvbn",
-  "qazwsx", "qweasd", "123456"
-];
 
 let lastResult = "";
 let allResults = new Map();
@@ -707,9 +814,12 @@ function tokenize(pwd) {
   return pwd.match(/[A-Za-z]+|\d+|[^A-Za-z0-9]/g) || [];
 }
 
+function isPhoneNumber(str) {
+  return /^0\d{9,10}$/.test(str.replace(/\D/g, ""));
+}
+
 function validVariant(variant, original) {
   if (!variant) return false;
-  // ✅ FIX: Case-sensitive compare (do not lowercase)
   if (variant === original) return false;
   if (variant.length > MAX_LENGTH) return false;
   if (hasEntropyIssue(variant)) return false;
@@ -721,10 +831,8 @@ function validVariant(variant, original) {
  * Detects: aaaa, 1111, abcabc, 123123, qwertyqwerty
  */
 function hasEntropyIssue(str) {
-  // Single char repeat
-  if (/^(.)\1+$/.test(str)) return true;
+  if (/^(.)\1{3,}$/.test(str)) return true;
   
-  // Pattern repeat (abcabc, 123123)
   for (let len = 1; len <= str.length / 2; len++) {
     const pattern = str.substring(0, len);
     let expected = "";
@@ -761,140 +869,111 @@ function updateProgress(current, total) {
 // TRANSFORMATION RULES
 // ============================================
 
-function rule_1a(t) {
-  return [t.join("").toLowerCase()];
-}
+function rule_1a(t) { return [t.join("").toLowerCase()]; }
+function rule_1b(t) { return [t.join("").toUpperCase()]; }
 
-function rule_1b(t) {
-  return [t.join("").toUpperCase()];
-}
-
-/**
- * ✅ FIX: Rule 1c - Capitalize first letter, keep rest as-is
- */
 function rule_1c(t) {
   const str = t.join("");
-  let firstLetterIndex = -1;
-  
   for (let i = 0; i < str.length; i++) {
     if (/[a-zA-Z]/.test(str[i])) {
-      firstLetterIndex = i;
-      break;
+      return [str.substring(0, i) + str[i].toUpperCase() + str.substring(i + 1)];
     }
   }
-
-  if (firstLetterIndex === -1) return [];
-
-  const result =
-    str.substring(0, firstLetterIndex) +
-    str[firstLetterIndex].toUpperCase() +
-    str.substring(firstLetterIndex + 1);
-
-  return [result];
+  return [];
 }
 
 function rule_2a(t) { return [t.join("") + "123"]; }
 function rule_2b(t) { return [t.join("") + "1234"]; }
-function rule_2c(t) { return [t.join("") + "1111"]; }
-function rule_2d(t) { return [t.join("") + "9999"]; }
+function rule_2c(t) { return [t.join("") + "12345"]; }
+function rule_2d(t) { return [t.join("") + "123456"]; }
+function rule_2e(t) { return [t.join("") + "1234567"]; }
+function rule_2f(t) { return [t.join("") + "12345678"]; }
+function rule_2g(t) { return [t.join("") + "123456789"]; }
 
 function rule_3a(t) { return [t.join("") + "1990"]; }
 function rule_3b(t) { return [t.join("") + "2000"]; }
-function rule_3c(t) { return [t.join("") + "2020"]; }
-function rule_3d(t) { return [t.join("") + "90"]; }
-function rule_3e(t) { return [t.join("") + "95"]; }
+function rule_3c(t) { return [t.join("") + "2010"]; }
+function rule_3d(t) { return [t.join("") + "2020"]; }
+function rule_3e(t) { return [t.join("") + "2024"]; }
+function rule_3f(t) { return [t.join("") + "90"]; }
+function rule_3g(t) { return [t.join("") + "95"]; }
 
 function rule_4a(t) { return [t.join("") + "@"]; }
 function rule_4b(t) { return [t.join("") + "@@"]; }
 function rule_4c(t) { return [t.join("") + "!"]; }
+function rule_4d(t) { return [t.join("") + "!!"]; }
+function rule_4e(t) { return [t.join("") + "#"]; }
+function rule_4f(t) { return [t.join("") + "$"]; }
 
 function rule_5a(t) { return [t.join("") + "vip"]; }
 function rule_5b(t) { return [t.join("") + "pro"]; }
 function rule_5c(t) { return [t.join("") + "cute"]; }
 function rule_5d(t) { return [t.join("") + "love"]; }
 function rule_5e(t) { return [t.join("") + "baby"]; }
+function rule_5f(t) { return [t.join("") + "hihi"]; }
+function rule_5g(t) { return [t.join("") + "kaka"]; }
 
 function rule_6a(t) { return [t.join("").replace(/[aA]/g, "@")]; }
 function rule_6b(t) { return [t.join("").replace(/[oO]/g, "0")]; }
 function rule_6c(t) { return [t.join("").replace(/[iI]/g, "1")]; }
 function rule_6d(t) { return [t.join("").replace(/[eE]/g, "3")]; }
+function rule_6e(t) { return [t.join("").replace(/[sS]/g, "$")]; }
+function rule_6f(t) { return [t.join("").replace(/[tT]/g, "7")]; }
 
-/**
- * ✅ FIX: More flexible separator patterns
- */
 function rule_7a(t) {
   const w = t.join("");
-  const patterns = [
-    /^([A-Za-z]+)(\d+)$/,
-    /^(\d+)([A-Za-z]+)$/,
-    /([A-Za-z]+)(\d+)(?=[^A-Za-z0-9]|$)/
-  ];
-  
-  for (const pattern of patterns) {
-    const m = w.match(pattern);
-    if (m) {
-      const letters = m[1] && /[a-zA-Z]/.test(m[1]) ? m[1] : m[2];
-      const digits = m[1] && /\d/.test(m[1]) ? m[2] : m[1];
-      return [letters + "_" + digits];
-    }
+  const m = w.match(/^([A-Za-z]+)(\d+)$/) || w.match(/^(\d+)([A-Za-z]+)$/);
+  if (m) {
+    const letters = /[a-zA-Z]/.test(m[1]) ? m[1] : m[2];
+    const digits = /\d/.test(m[1]) ? m[1] : m[2];
+    return [letters + "_" + digits];
   }
   return [];
 }
 
 function rule_7b(t) {
   const w = t.join("");
-  const patterns = [
-    /^([A-Za-z]+)(\d+)$/,
-    /^(\d+)([A-Za-z]+)$/,
-    /([A-Za-z]+)(\d+)(?=[^A-Za-z0-9]|$)/
-  ];
-  
-  for (const pattern of patterns) {
-    const m = w.match(pattern);
-    if (m) {
-      const letters = m[1] && /[a-zA-Z]/.test(m[1]) ? m[1] : m[2];
-      const digits = m[1] && /\d/.test(m[1]) ? m[2] : m[1];
-      return [letters + "-" + digits];
-    }
+  const m = w.match(/^([A-Za-z]+)(\d+)$/) || w.match(/^(\d+)([A-Za-z]+)$/);
+  if (m) {
+    const letters = /[a-zA-Z]/.test(m[1]) ? m[1] : m[2];
+    const digits = /\d/.test(m[1]) ? m[1] : m[2];
+    return [letters + "-" + digits];
   }
   return [];
 }
 
 function rule_7c(t) {
   const w = t.join("");
-  const patterns = [
-    /^([A-Za-z]+)(\d+)$/,
-    /^(\d+)([A-Za-z]+)$/,
-    /([A-Za-z]+)(\d+)(?=[^A-Za-z0-9]|$)/
-  ];
-  
-  for (const pattern of patterns) {
-    const m = w.match(pattern);
-    if (m) {
-      const letters = m[1] && /[a-zA-Z]/.test(m[1]) ? m[1] : m[2];
-      const digits = m[1] && /\d/.test(m[1]) ? m[2] : m[1];
-      return [letters + "." + digits];
-    }
+  const m = w.match(/^([A-Za-z]+)(\d+)$/) || w.match(/^(\d+)([A-Za-z]+)$/);
+  if (m) {
+    const letters = /[a-zA-Z]/.test(m[1]) ? m[1] : m[2];
+    const digits = /\d/.test(m[1]) ? m[1] : m[2];
+    return [letters + "." + digits];
   }
   return [];
 }
 
-function rule_8a(t) {
-  return [t.join("").split("").reverse().join("")];
+function rule_8a(t) { return [t.join("").split("").reverse().join("")]; }
+
+function rule_8b(t) {
+  const w = t.join("");
+  const letters = w.match(/[A-Za-z]/g) || [];
+  const nonLetters = w.match(/[^A-Za-z]/g) || [];
+  return [letters.reverse().join("") + nonLetters.join("")];
 }
 
-/**
- * ✅ FIX: Check length before doubling
- */
 function rule_9a(t) {
   const w = t.join("");
   if ((w.length * 2) > MAX_LENGTH) return [];
   return [w + w];
 }
 
-/**
- * ✅ FIX: Rule 10 uses username, not password
- */
+function rule_9b(t) {
+  const w = t.join("");
+  if ((w.length * 2) > MAX_LENGTH) return [];
+  return [w + w];
+}
+
 function rule_10a(user) {
   const base = user.split("@")[0];
   return base ? [base + "123"] : [];
@@ -910,26 +989,80 @@ function rule_10c(user) {
   return base ? [base + "1999"] : [];
 }
 
+function rule_10d(user) {
+  const base = user.split("@")[0];
+  return base ? [base + "@123"] : [];
+}
+
+function rule_11a(t) {
+  const w = t.join("");
+  const lastNum = w.match(/\d+$/);
+  if (lastNum) {
+    const num = lastNum[0];
+    const rest = w.substring(0, w.length - num.length);
+    return [rest + num + num.charAt(0)];
+  }
+  return [];
+}
+
+function rule_11b(t) {
+  const w = t.join("");
+  const firstNum = w.match(/^\d+/);
+  if (firstNum) {
+    const num = firstNum[0];
+    return [num + num.charAt(0) + w.substring(num.length)];
+  }
+  return [];
+}
+
+function rule_11c(t) {
+  const w = t.join("");
+  return [w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()];
+}
+
+function rule_12a(t) {
+  const w = t.join("");
+  if (isPhoneNumber(w)) {
+    return [w + "@"];
+  }
+  return [];
+}
+
+function rule_12b(t) {
+  const w = t.join("");
+  if (isPhoneNumber(w)) {
+    return [w + "123"];
+  }
+  return [];
+}
+
+function rule_12c(t) {
+  const w = t.join("");
+  if (isPhoneNumber(w)) {
+    return [w + "vip"];
+  }
+  return [];
+}
+
 const RULES_MAP = {
   "1a": rule_1a, "1b": rule_1b, "1c": rule_1c,
-  "2a": rule_2a, "2b": rule_2b, "2c": rule_2c, "2d": rule_2d,
-  "3a": rule_3a, "3b": rule_3b, "3c": rule_3c, "3d": rule_3d, "3e": rule_3e,
-  "4a": rule_4a, "4b": rule_4b, "4c": rule_4c,
-  "5a": rule_5a, "5b": rule_5b, "5c": rule_5c, "5d": rule_5d, "5e": rule_5e,
-  "6a": rule_6a, "6b": rule_6b, "6c": rule_6c, "6d": rule_6d,
+  "2a": rule_2a, "2b": rule_2b, "2c": rule_2c, "2d": rule_2d, "2e": rule_2e, "2f": rule_2f, "2g": rule_2g,
+  "3a": rule_3a, "3b": rule_3b, "3c": rule_3c, "3d": rule_3d, "3e": rule_3e, "3f": rule_3f, "3g": rule_3g,
+  "4a": rule_4a, "4b": rule_4b, "4c": rule_4c, "4d": rule_4d, "4e": rule_4e, "4f": rule_4f,
+  "5a": rule_5a, "5b": rule_5b, "5c": rule_5c, "5d": rule_5d, "5e": rule_5e, "5f": rule_5f, "5g": rule_5g,
+  "6a": rule_6a, "6b": rule_6b, "6c": rule_6c, "6d": rule_6d, "6e": rule_6e, "6f": rule_6f,
   "7a": rule_7a, "7b": rule_7b, "7c": rule_7c,
-  "8a": rule_8a,
-  "9a": rule_9a,
-  "10a": rule_10a, "10b": rule_10b, "10c": rule_10c
+  "8a": rule_8a, "8b": rule_8b,
+  "9a": rule_9a, "9b": rule_9b,
+  "10a": rule_10a, "10b": rule_10b, "10c": rule_10c, "10d": rule_10d,
+  "11a": rule_11a, "11b": rule_11b, "11c": rule_11c,
+  "12a": rule_12a, "12b": rule_12b, "12c": rule_12c
 };
 
 // ============================================
 // ADVANCED MUTATIONS
 // ============================================
 
-/**
- * ✅ FIX: Full recursive leet mutations using DFS
- */
 function mutateWord(word) {
   const results = new Set();
   
@@ -955,33 +1088,7 @@ function mutateWord(word) {
 }
 
 /**
- * ✅ FIX: Smart username extraction with number/camelCase support
- */
-function extractUsernameVariants(user) {
-  const base = user.split("@")[0];
-  const results = new Set();
-  
-  results.add(base);
-  
-  // Split by separators
-  const parts = base.split(/[\.\_\-\d]/);
-  for (const p of parts) {
-    if (p.length >= 3) {
-      results.add(p);
-    }
-  }
-  
-  // Extract year if exists
-  const yearMatch = base.match(/\d{4}/);
-  if (yearMatch) {
-    results.add(base.replace(yearMatch[0], ""));
-  }
-  
-  return Array.from(results);
-}
-
-/**
- * ✅ FIX: Chain rules with proper limit
+ * ✅ Chain rules with proper limit
  */
 async function applyRuleChain(base, user, selectedRules, depth, limit) {
   const results = new Set([base]);
@@ -1038,11 +1145,9 @@ function initializeUI() {
   advancedContainer.innerHTML = "";
   
   RULES_CONFIG.forEach((group) => {
-    // Basic tab
     const groupDiv1 = createRuleGroup(group, "basic");
     basicContainer.appendChild(groupDiv1);
     
-    // Advanced tab
     const groupDiv2 = createRuleGroup(group, "advanced");
     advancedContainer.appendChild(groupDiv2);
   });
@@ -1148,6 +1253,7 @@ function handleFileSelect() {
   reader.onload = (e) => {
     const content = e.target.result;
     lastData = parseFileContent(content);
+    document.getElementById("statsFile").textContent = lastData.length;
     updateButtonStates();
     showToast(`✅ Tải ${lastData.length} cặp dữ liệu thành công!`, "success");
   };
@@ -1157,9 +1263,6 @@ function handleFileSelect() {
   reader.readAsText(file, "utf-8");
 }
 
-/**
- * ✅ FIX: Parse with proper colon handling
- */
 function parseFileContent(content) {
   return content
     .split("\n")
@@ -1186,7 +1289,6 @@ async function generateVariants(mode) {
     return;
   }
   
-  // ✅ FIX: Race condition prevention
   if (isProcessing) return;
   isProcessing = true;
   shouldStop = false;
@@ -1196,28 +1298,76 @@ async function generateVariants(mode) {
   document.getElementById("stopBtn").style.display = "inline-flex";
   document.getElementById("progressSection").classList.add("active");
   
-  const selector = mode === "basic" ? "#basicRulesContainer" : "#advancedRulesContainer";
-  const chosen = Array.from(document.querySelectorAll(`${selector} input:checked`))
-    .map((c) => c.value);
+  let chosen = [];
   
-  if (chosen.length === 0) {
-    showToast("❌ Vui lòng chọn ít nhất một quy tắc!", "error");
-    isProcessing = false;
-    document.getElementById("generateBasicBtn").disabled = false;
-    document.getElementById("generateAdvBtn").disabled = false;
-    document.getElementById("stopBtn").style.display = "none";
-    document.getElementById("progressSection").classList.remove("active");
-    return;
-  }
-  
-  allResults.clear();
-  const chunkSize = parseInt(document.getElementById("chunkSize").value);
-  const maxResults = parseInt(document.getElementById("maxResults").value);
-  const depth = mode === "advanced" ? parseInt(document.getElementById("mutationDepth").value) : 1;
-  
-  let totalProcessed = 0;
-  
-  try {
+  if (mode === "custom") {
+    // Handle custom patterns
+    const suffixes = document.getElementById("customSuffixes").value.split("\n").filter(x => x.trim());
+    const prefixes = document.getElementById("customPrefixes").value.split("\n").filter(x => x.trim());
+    const separators = document.getElementById("customSeparators").value.split("\n").filter(x => x.trim());
+    
+    allResults.clear();
+    
+    for (const item of lastData) {
+      if (!isProcessing || shouldStop) break;
+      
+      const user = item.user;
+      const pass = item.pass;
+      
+      // Add suffixes
+      for (const suffix of suffixes) {
+        const variant = pass + suffix;
+        if (validVariant(variant, pass) && variant.length <= MAX_LENGTH) {
+          const key = `${user.toLowerCase()}:${variant}`;
+          allResults.set(key, true);
+        }
+      }
+      
+      // Add prefixes
+      for (const prefix of prefixes) {
+        const variant = prefix + pass;
+        if (validVariant(variant, pass) && variant.length <= MAX_LENGTH) {
+          const key = `${user.toLowerCase()}:${variant}`;
+          allResults.set(key, true);
+        }
+      }
+      
+      // Add separators
+      for (const sep of separators) {
+        const m = pass.match(/^([A-Za-z]+)(\d+)$/) || pass.match(/^(\d+)([A-Za-z]+)$/);
+        if (m) {
+          const letters = /[a-zA-Z]/.test(m[1]) ? m[1] : m[2];
+          const digits = /\d/.test(m[1]) ? m[1] : m[2];
+          const variant = letters + sep + digits;
+          if (validVariant(variant, pass) && variant.length <= MAX_LENGTH) {
+            const key = `${user.toLowerCase()}:${variant}`;
+            allResults.set(key, true);
+          }
+        }
+      }
+    }
+  } else {
+    const selector = mode === "basic" ? "#basicRulesContainer" : "#advancedRulesContainer";
+    chosen = Array.from(document.querySelectorAll(`${selector} input:checked`))
+      .map((c) => c.value);
+    
+    if (chosen.length === 0) {
+      showToast("❌ Vui lòng chọn ít nhất một quy tắc!", "error");
+      isProcessing = false;
+      document.getElementById("generateBasicBtn").disabled = false;
+      document.getElementById("generateAdvBtn").disabled = false;
+      document.getElementById("stopBtn").style.display = "none";
+      document.getElementById("progressSection").classList.remove("active");
+      return;
+    }
+    
+    allResults.clear();
+    const chunkSize = parseInt(document.getElementById("chunkSize").value);
+    const maxResults = parseInt(document.getElementById("maxResults").value);
+    const depth = mode === "advanced" ? parseInt(document.getElementById("mutationDepth").value) : 1;
+    
+    let totalProcessed = 0;
+    
     for (let i = 0; i < lastData.length; i += chunkSize) {
       if (!isProcessing || shouldStop) break;
       
@@ -1227,11 +1377,10 @@ async function generateVariants(mode) {
         if (!isProcessing || shouldStop) break;
         if (allResults.size >= maxResults) break;
         
-        const origPass = item.pass; // Keep original (don't removeAccents)
+        const origPass = item.pass;
         const user = item.user;
         
         if (mode === "basic") {
-          // Single layer direct rules
           const tokens = tokenize(origPass);
           for (const ruleId of chosen) {
             if (allResults.size >= maxResults) break;
@@ -1240,7 +1389,7 @@ async function generateVariants(mode) {
             if (!ruleFn) continue;
             
             try {
-              const variants = ruleId.startsWith("10") ? ruleFn(user) : ruleFn(tokens);
+              const variants = ruleId.startsWith("10") || ruleId.startsWith("12") ? ruleFn(user) : ruleFn(tokens);
               const variantsArray = Array.isArray(variants) ? variants : [variants];
               
               for (const v of variantsArray) {
@@ -1255,7 +1404,6 @@ async function generateVariants(mode) {
             }
           }
         } else {
-          // Advanced mode with chain
           const variants = await applyRuleChain(origPass, user, chosen, depth, maxResults);
           
           for (const v of variants) {
@@ -1271,31 +1419,31 @@ async function generateVariants(mode) {
       updateProgress(totalProcessed, lastData.length);
       await new Promise(r => setTimeout(r, 0));
     }
-    
-    displayResults();
-    showToast(
-      `✅ Tạo ${allResults.size} variants từ ${totalProcessed} cặp!`,
-      "success"
-    );
-  } catch (e) {
-    console.error(e);
-    showToast("❌ Lỗi khi xử lý!", "error");
-  } finally {
-    isProcessing = false;
-    shouldStop = false;
-    document.getElementById("generateBasicBtn").disabled = false;
-    document.getElementById("generateAdvBtn").disabled = false;
-    document.getElementById("stopBtn").style.display = "none";
-    document.getElementById("progressSection").classList.remove("active");
-    updateButtonStates();
   }
+  
+  displayResults();
+  const ratio = lastData.length > 0 ? (allResults.size / lastData.length).toFixed(1) : 0;
+  document.getElementById("statsVariants").textContent = allResults.size;
+  document.getElementById("statsRatio").textContent = ratio + "x";
+  
+  showToast(
+    `✅ Tạo ${allResults.size} variants từ ${lastData.length} cặp!`,
+    "success"
+  );
+  
+  isProcessing = false;
+  shouldStop = false;
+  document.getElementById("generateBasicBtn").disabled = false;
+  document.getElementById("generateAdvBtn").disabled = false;
+  document.getElementById("stopBtn").style.display = "none";
+  document.getElementById("progressSection").classList.remove("active");
+  updateButtonStates();
 }
 
 function displayResults() {
   const previewLines = 1000;
   const items = Array.from(allResults.keys()).slice(0, previewLines);
   
-  // ✅ FIX: Efficient string building
   let output = "";
   for (const item of items) {
     output += item + "\n";
@@ -1365,13 +1513,7 @@ function copyToClipboard() {
   navigator.clipboard.writeText(lastResult).then(() => {
     showToast("✅ Đã copy vào clipboard!", "success");
   }).catch(() => {
-    // Fallback for older browsers
-    try {
-      document.execCommand("copy");
-      showToast("✅ Đã copy vào clipboard!", "success");
-    } catch (e) {
-      showToast("❌ Lỗi khi copy!", "error");
-    }
+    showToast("❌ Lỗi khi copy!", "error");
   });
 }
 
@@ -1387,6 +1529,9 @@ function clearAll() {
   document.getElementById("count").textContent = "0";
   document.getElementById("totalCount").textContent = "0";
   document.getElementById("progressBar").style.width = "0%";
+  document.getElementById("statsFile").textContent = "0";
+  document.getElementById("statsVariants").textContent = "0";
+  document.getElementById("statsRatio").textContent = "0x";
   updateButtonStates();
   showToast("🗑️ Đã xóa tất cả dữ liệu!", "info");
 }
