@@ -131,65 +131,43 @@
   <footer>Made with ❤️ by @teddyvrp</footer>
 
 <script>
-const MAX_LEN = 18;
-let lastResult = "";
+const MAX_LEN=18;let lastResult="";
 
 function removeAccents(str){return str.normalize("NFD").replace(/[\u0300-\u036f]/g,"");}
 function tokenize(pwd){return pwd.match(/[A-Za-z]+|\d+|[^A-Za-z0-9]/g)||[];}
-function validVariant(variant,original){
-  if(!variant||variant===original) return false;
-  if(variant.length>MAX_LEN) return false;
-  if(/^(.)\1+$/.test(variant)) return false;
-  return true;
-}
+function validVariant(variant,original){if(!variant||variant===original)return false;if(variant.length>MAX_LEN)return false;if(/^(.)\1+$/.test(variant))return false;return true;}
 
-// Subrule functions
-function rule_1a(tokens){return [tokens.join("").toLowerCase()];}
-function rule_1b(tokens){return [tokens.join("").toUpperCase()];}
-function rule_1c(tokens){return [tokens.join("").replace(/([a-zA-Z])/,c=>c.toUpperCase())];}
+// Subrules
+function rule_1a(t){return [t.join("").toLowerCase()];}
+function rule_1b(t){return [t.join("").toUpperCase()];}
+function rule_1c(t){return [t.join("").replace(/([a-zA-Z])/,c=>c.toUpperCase())];}
 
-function rule_2a(tokens){return [tokens.join("")+"123"];}
-function rule_2b(tokens){return [tokens.join("")+"1234"];}
-function rule_2c(tokens){return [tokens.join("")+"1111"];}
-function rule_2d(tokens){return [tokens.join("")+"9999"];}
+function rule_2a(t){return [t.join("")+"123"];}function rule_2b(t){return [t.join("")+"1234"];}
+function rule_2c(t){return [t.join("")+"1111"];}function rule_2d(t){return [t.join("")+"9999"];}
 
-function rule_3a(tokens){return [tokens.join("")+"1990"];}
-function rule_3b(tokens){return [tokens.join("")+"2000"];}
-function rule_3c(tokens){return [tokens.join("")+"2020"];}
-function rule_3d(tokens){return [tokens.join("")+"90"];}
-function rule_3e(tokens){return [tokens.join("")+"95"];}
+function rule_3a(t){return [t.join("")+"1990"];}function rule_3b(t){return [t.join("")+"2000"];}
+function rule_3c(t){return [t.join("")+"2020"];}function rule_3d(t){return [t.join("")+"90"];}
+function rule_3e(t){return [t.join("")+"95"];}
 
-function rule_4a(tokens){return [tokens.join("")+"@"];}
-function rule_4b(tokens){return [tokens.join("")+"@@"];}
-function rule_4c(tokens){return [tokens.join("")+"!"];}
+function rule_4a(t){return [t.join("")+"@"];}function rule_4b(t){return [t.join("")+"@@"];}
+function rule_4c(t){return [t.join("")+"!"];}
 
-function rule_5a(tokens){return [tokens.join("")+"vip"];}
-function rule_5b(tokens){return [tokens.join("")+"pro"];}
-function rule_5c(tokens){return [tokens.join("")+"cute"];}
-function rule_5d(tokens){return [tokens.join("")+"love"];}
-function rule_5e(tokens){return [tokens.join("")+"baby"];}
+function rule_5a(t){return [t.join("")+"vip"];}function rule_5b(t){return [t.join("")+"pro"];}
+function rule_5c(t){return [t.join("")+"cute"];}function rule_5d(t){return [t.join("")+"love"];}
+function rule_5e(t){return [t.join("")+"baby"];}
 
-function rule_6a(tokens){return [tokens.join("").replace(/a/g,"@")];}
-function rule_6b(tokens){return [tokens.join("").replace(/o/g,"0")];}
-function rule_6c(tokens){return [tokens.join("").replace(/i/g,"1")];}
-function rule_6d(tokens){return [tokens.join("").replace(/e/g,"3")];}
+function rule_6a(t){return [t.join("").replace(/a/g,"@")];}
+function rule_6b(t){return [t.join("").replace(/o/g,"0")];}
+function rule_6c(t){return [t.join("").replace(/i/g,"1")];}
+function rule_6d(t){return [t.join("").replace(/e/g,"3")];}
 
-function rule_7a(tokens){
-  let word=tokens.join("");let m=word.match(/^([A-Za-z]+)(\d+)$/);
-  return m?[m[1]+"_"+m[2]]:[];
-}
-function rule_7b(tokens){
-  let word=tokens.join("");let m=word.match(/^([A-Za-z]+)(\d+)$/);
-  return m?[m[1]+"-"+m[2]]:[];
-}
-function rule_7c(tokens){
-  let word=tokens.join("");let m=word.match(/^([A-Za-z]+)(\d+)$/);
-  return m?[m[1]+"."+m[2]]:[];
-}
+function rule_7a(t){let w=t.join("");let m=w.match(/^([A-Za-z]+)(\d+)$/);return m?[m[1]+"_"+m[2]]:[];}
+function rule_7b(t){let w=t.join("");let m=w.match(/^([A-Za-z]+)(\d+)$/);return m?[m[1]+"-"+m[2]]:[];}
+function rule_7c(t){let w=t.join("");let m=w.match(/^([A-Za-z]+)(\d+)$/);return m?[m[1]+"."+m[2]]:[];}
 
-function rule_8a(tokens){return [tokens.join("").split("").reverse().join("")];}
+function rule_8a(t){return [t.join("").split("").reverse().join("")];}
 
-function rule_9a(tokens){let w=tokens.join("");return w.length<8?[w+w]:[];}
+function rule_9a(t){let w=t.join("");return w.length<8?[w+w]:[];}
 
 function rule_10a(user){let base=user.split("@")[0];return [base+"123"];}
 function rule_10b(user){let base=user.split("@")[0];return [base+"@"];}
@@ -220,6 +198,7 @@ function processFile(content){
   let lines=content.split("\n").map(l=>l.trim()).filter(l=>l.length>0);
   let results=new Set();
   const chosen=Array.from(document.querySelectorAll(".rules input:checked")).map(c=>c.value);
+  console.log("Chosen rules:",chosen);
 
   for(let line of lines){
     if(!line.includes(":")) continue;
@@ -229,6 +208,7 @@ function processFile(content){
     pwd=removeAccents(pwd);
     if(!pwd) continue;
     let tokens=tokenize(pwd);
+    console.log("Processing:",user,pwd);
 
     for(let rid of chosen){
       let fn=RULES_MAP[rid];
