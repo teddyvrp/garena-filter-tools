@@ -31,12 +31,14 @@
   </div>
 
   <button onclick="runTool()">Tạo kết quả</button>
+  <button onclick="downloadResult()">Download kết quả</button>
 
-  <h3>Kết quả:</h3>
+  <h3>Kết quả (<span id="count">0</span> dòng):</h3>
   <div id="output"></div>
 
 <script>
 const MAX_LEN = 18;
+let lastResult = "";
 
 function removeAccents(str) {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -60,7 +62,7 @@ function rule_add_number(tokens) { return [tokens.join("")+"123", tokens.join(""
 function rule_add_year(tokens) { return [tokens.join("")+"1990", tokens.join("")+"2000", tokens.join("")+"2020", tokens.join("")+"90", tokens.join("")+"95"]; }
 function rule_add_special(tokens) { return [tokens.join("")+"@", tokens.join("")+"@@", tokens.join("")+"!"]; }
 function rule_vn_suffix(tokens) { return [tokens.join("")+"vip", tokens.join("")+"pro", tokens.join("")+"cute", tokens.join("")+"love", tokens.join("")+"baby"]; }
-function rule_leet(tokens) { return tokens.join("").replace(/a/g,"@").replace(/o/g,"0").replace(/i/g,"1").replace(/e/g,"3"); }
+function rule_leet(tokens) { return [tokens.join("").replace(/a/g,"@").replace(/o/g,"0").replace(/i/g,"1").replace(/e/g,"3")]; }
 function rule_separator(tokens) {
   let word = tokens.join("");
   let m = word.match(/^([A-Za-z]+)(\d+)$/);
@@ -94,12 +96,14 @@ function runTool() {
 
   const reader = new FileReader();
   reader.onload = function(e) {
-    let lines = e.target.result.trim().split("\n");
-    let out = "";
+    let lines = e.target.result.split("\n").map(l=>l.trim()).filter(l=>l.length>0);
+    let results = new Set();
 
     for (let line of lines) {
       if (!line.includes(":")) continue;
-      let [user,pwd] = line.split(":",2);
+      let parts = line.split(":");
+      let user = parts[0].trim();
+      let pwd = parts.slice(1).join(":").trim(); // giữ nguyên phần password kể cả có dấu :
       pwd = removeAccents(pwd);
       if (!pwd) continue;
       let tokens = tokenize(pwd);
@@ -111,17 +115,33 @@ function runTool() {
         } else {
           variants = RULES_MAP[rid](tokens);
         }
-        if (typeof variants==="string") variants=[variants];
+        if (!Array.isArray(variants)) variants=[variants];
         for (let v of variants) {
           if (validVariant(v,pwd)) {
-            out += user+":"+v+"\n";
+            results.add(user+":"+v);
           }
         }
       }
     }
-    document.getElementById("output").textContent = out || "Không có kết quả.";
+    lastResult = Array.from(results).join("\n");
+    document.getElementById("output").textContent = lastResult || "Không có kết quả.";
+    document.getElementById("count").textContent = results.size;
   };
   reader.readAsText(fileInput.files[0], "utf-8");
+}
+
+function downloadResult() {
+  if (!lastResult) {
+    alert("Chưa có kết quả để tải!");
+    return;
+  }
+  const blob = new Blob([lastResult], {type: "text/plain"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "ket_qua.txt";
+  a.click();
+  URL.revokeObjectURL(url);
 }
 </script>
 </body>
