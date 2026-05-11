@@ -1,1 +1,128 @@
-<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Tool</title></head><body><h1>Password Variant Tool</h1><p>File fixed.</p></body></html>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Password Variant Tool</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .rules { margin: 10px 0; }
+    .rules label { display: block; margin: 3px 0; }
+    #output { white-space: pre; background: #f4f4f4; padding: 10px; margin-top: 15px; }
+  </style>
+</head>
+<body>
+  <h2>Tool sinh biến thể mật khẩu</h2>
+
+  <p>Chọn file dữ liệu dạng <code>username:password</code> (mỗi dòng một cặp):</p>
+  <input type="file" id="fileInput" />
+
+  <div class="rules">
+    <h3>Chọn rule:</h3>
+    <label><input type="checkbox" value="1"> 1. Viết thường/hoa/chữ cái đầu</label>
+    <label><input type="checkbox" value="2"> 2. Thêm số phổ biến</label>
+    <label><input type="checkbox" value="3"> 3. Thêm năm</label>
+    <label><input type="checkbox" value="4"> 4. Thêm ký tự đặc biệt (@, @@, !)</label>
+    <label><input type="checkbox" value="5"> 5. Hậu tố kiểu Việt (vip, pro, cute…)</label>
+    <label><input type="checkbox" value="6"> 6. Chuyển sang leet (a→@, o→0…)</label>
+    <label><input type="checkbox" value="7"> 7. Thêm dấu phân cách (abc123 → abc_123…)</label>
+    <label><input type="checkbox" value="8"> 8. Đảo ngược chuỗi</label>
+    <label><input type="checkbox" value="9"> 9. Nhân đôi mật khẩu</label>
+    <label><input type="checkbox" value="10"> 10. Biến đổi từ username (thêm 123, @, 1999)</label>
+  </div>
+
+  <button onclick="runTool()">Tạo kết quả</button>
+
+  <h3>Kết quả:</h3>
+  <div id="output"></div>
+
+<script>
+const MAX_LEN = 18;
+
+function removeAccents(str) {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+function tokenize(pwd) {
+  return pwd.match(/[A-Za-z]+|\d+|[^A-Za-z0-9]/g) || [];
+}
+function validVariant(variant, original) {
+  if (!variant || variant === original) return false;
+  if (variant.length > MAX_LEN) return false;
+  if (/^(.)\1+$/.test(variant)) return false;
+  return true;
+}
+
+// RULES
+function rule_case(tokens) {
+  let word = tokens.join("");
+  return [word.toLowerCase(), word.toUpperCase(), word.charAt(0).toUpperCase()+word.slice(1)];
+}
+function rule_add_number(tokens) { return [tokens.join("")+"123", tokens.join("")+"1234", tokens.join("")+"1111", tokens.join("")+"9999"]; }
+function rule_add_year(tokens) { return [tokens.join("")+"1990", tokens.join("")+"2000", tokens.join("")+"2020", tokens.join("")+"90", tokens.join("")+"95"]; }
+function rule_add_special(tokens) { return [tokens.join("")+"@", tokens.join("")+"@@", tokens.join("")+"!"]; }
+function rule_vn_suffix(tokens) { return [tokens.join("")+"vip", tokens.join("")+"pro", tokens.join("")+"cute", tokens.join("")+"love", tokens.join("")+"baby"]; }
+function rule_leet(tokens) { return tokens.join("").replace(/a/g,"@").replace(/o/g,"0").replace(/i/g,"1").replace(/e/g,"3"); }
+function rule_separator(tokens) {
+  let word = tokens.join("");
+  let m = word.match(/^([A-Za-z]+)(\d+)$/);
+  if (m) return [m[1]+"_"+m[2], m[1]+"-"+m[2], m[1]+"."+m[2]];
+  return [];
+}
+function rule_reverse(tokens) { return [tokens.join("").split("").reverse().join("")]; }
+function rule_double(tokens) { let w = tokens.join(""); return w.length<8 ? [w+w] : []; }
+function rule_username(user) { let base = user.split("@")[0]; return [base+"123", base+"@", base+"1999"]; }
+
+const RULES_MAP = {
+  "1": rule_case,
+  "2": rule_add_number,
+  "3": rule_add_year,
+  "4": rule_add_special,
+  "5": rule_vn_suffix,
+  "6": rule_leet,
+  "7": rule_separator,
+  "8": rule_reverse,
+  "9": rule_double,
+  "10": rule_username
+};
+
+function runTool() {
+  const fileInput = document.getElementById("fileInput");
+  if (!fileInput.files.length) {
+    alert("Vui lòng chọn file dữ liệu!");
+    return;
+  }
+  const chosen = Array.from(document.querySelectorAll(".rules input:checked")).map(c=>c.value);
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    let lines = e.target.result.trim().split("\n");
+    let out = "";
+
+    for (let line of lines) {
+      if (!line.includes(":")) continue;
+      let [user,pwd] = line.split(":",2);
+      pwd = removeAccents(pwd);
+      if (!pwd) continue;
+      let tokens = tokenize(pwd);
+
+      for (let rid of chosen) {
+        let variants;
+        if (rid==="10") {
+          variants = RULES_MAP[rid](user);
+        } else {
+          variants = RULES_MAP[rid](tokens);
+        }
+        if (typeof variants==="string") variants=[variants];
+        for (let v of variants) {
+          if (validVariant(v,pwd)) {
+            out += user+":"+v+"\n";
+          }
+        }
+      }
+    }
+    document.getElementById("output").textContent = out || "Không có kết quả.";
+  };
+  reader.readAsText(fileInput.files[0], "utf-8");
+}
+</script>
+</body>
+</html>
