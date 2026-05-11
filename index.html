@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Password Variant Tool</title>
+  <title>🔑 Password Variant Tool by @teddyvrp</title>
   <style>
     body {
       font-family: "Segoe UI", Arial, sans-serif;
@@ -75,6 +75,12 @@
       background: #aaa;
       cursor: not-allowed;
     }
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 13px;
+      color: #666;
+    }
   </style>
 </head>
 <body>
@@ -104,6 +110,8 @@
     <button id="downloadBtn" class="btn-download" disabled>Download kết quả</button>
   </div>
 
+  <footer>Made with ❤️ by @teddyvrp</footer>
+
 <script>
 const MAX_LEN = 18;
 let lastResult = "";
@@ -124,7 +132,12 @@ function validVariant(variant, original) {
 // RULES
 function rule_case(tokens) {
   let word = tokens.join("");
-  return [word.toLowerCase(), word.toUpperCase(), word.charAt(0).toUpperCase()+word.slice(1)];
+  return [
+    word.toLowerCase(),
+    word.toUpperCase(),
+    // Viết hoa chữ cái đầu tiên tìm thấy trong chuỗi (bỏ qua số/ký tự đặc biệt)
+    word.replace(/([a-zA-Z])/, (c) => c.toUpperCase())
+  ];
 }
 function rule_add_number(tokens) { return [tokens.join("")+"123", tokens.join("")+"1234", tokens.join("")+"1111", tokens.join("")+"9999"]; }
 function rule_add_year(tokens) { return [tokens.join("")+"1990", tokens.join("")+"2000", tokens.join("")+"2020", tokens.join("")+"90", tokens.join("")+"95"]; }
