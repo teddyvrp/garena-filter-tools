@@ -4,105 +4,123 @@
   <meta charset="UTF-8">
   <title>🔑 Password Variant Tool by @teddyvrp</title>
   <style>
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: #f0f2f5;
-      margin: 0;
-      padding: 40px;
-      color: #333;
-    }
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    h2 {
-      text-align: center;
-      color: #0078d7;
-    }
-    .file-upload {
-      text-align: center;
-      margin: 20px 0;
-    }
-    input[type="file"] {
-      padding: 10px;
-      border: 2px dashed #0078d7;
-      border-radius: 8px;
-      cursor: pointer;
-      background: #f9f9f9;
-    }
-    .rules {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin: 20px 0;
-    }
-    .rules label {
-      background: #f4f4f4;
-      padding: 8px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    #output {
-      white-space: pre;
-      background: #fafafa;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      margin-top: 20px;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-    .count {
-      font-weight: bold;
-      color: #0078d7;
-    }
-    .btn-download {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 10px 20px;
-      background: #0078d7;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .btn-download:disabled {
-      background: #aaa;
-      cursor: not-allowed;
-    }
-    footer {
-      text-align: center;
-      margin-top: 30px;
-      font-size: 13px;
-      color: #666;
-    }
+    body {font-family:"Segoe UI",Arial,sans-serif;background:#f0f2f5;margin:0;padding:40px;color:#333;}
+    .container {max-width:900px;margin:auto;background:#fff;padding:30px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+    h2 {text-align:center;color:#0078d7;}
+    .file-upload {text-align:center;margin:20px 0;}
+    input[type="file"] {padding:10px;border:2px dashed #0078d7;border-radius:8px;cursor:pointer;background:#f9f9f9;}
+    .rules {margin:20px 0;}
+    .rule-group {margin-bottom:15px;padding:10px;background:#f4f4f4;border-radius:8px;}
+    .rule-group>label {font-weight:bold;display:block;margin-bottom:5px;color:#0078d7;}
+    .subrules label {display:inline-block;margin-right:10px;margin-bottom:5px;background:#fff;padding:5px 8px;border-radius:6px;cursor:pointer;border:1px solid #ddd;}
+    #output {white-space:pre;background:#fafafa;padding:15px;border-radius:8px;border:1px solid #ddd;margin-top:20px;max-height:300px;overflow-y:auto;}
+    .count {font-weight:bold;color:#0078d7;}
+    .btn-download {display:inline-block;margin-top:15px;padding:10px 20px;background:#0078d7;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px;}
+    .btn-download:disabled {background:#aaa;cursor:not-allowed;}
+    footer {text-align:center;margin-top:30px;font-size:13px;color:#666;}
   </style>
 </head>
 <body>
   <div class="container">
     <h2>🔑 Password Variant Tool by @teddyvrp</h2>
-
     <div class="file-upload">
       <p>Chọn file dữ liệu dạng <code>username:password</code> (mỗi dòng một cặp):</p>
       <input type="file" id="fileInput" />
     </div>
 
     <div class="rules">
-      <label><input type="checkbox" value="1" checked> 1. Viết thường/hoa/chữ cái đầu</label>
-      <label><input type="checkbox" value="2" checked> 2. Thêm số phổ biến</label>
-      <label><input type="checkbox" value="3"> 3. Thêm năm</label>
-      <label><input type="checkbox" value="4"> 4. Thêm ký tự đặc biệt</label>
-      <label><input type="checkbox" value="5"> 5. Hậu tố kiểu Việt</label>
-      <label><input type="checkbox" value="6"> 6. Chuyển sang leet</label>
-      <label><input type="checkbox" value="7"> 7. Thêm dấu phân cách</label>
-      <label><input type="checkbox" value="8"> 8. Đảo ngược chuỗi</label>
-      <label><input type="checkbox" value="9"> 9. Nhân đôi mật khẩu</label>
-      <label><input type="checkbox" value="10"> 10. Biến đổi từ username</label>
+      <!-- Rule 1 -->
+      <div class="rule-group">
+        <label>1. Viết thường/hoa/chữ cái đầu</label>
+        <div class="subrules">
+          <label><input type="checkbox" value="1a"> Viết thường</label>
+          <label><input type="checkbox" value="1b"> Viết hoa</label>
+          <label><input type="checkbox" value="1c"> Hoa chữ cái đầu</label>
+        </div>
+      </div>
+      <!-- Rule 2 -->
+      <div class="rule-group">
+        <label>2. Thêm số phổ biến</label>
+        <div class="subrules">
+          <label><input type="checkbox" value="2a"> +123</label>
+          <label><input type="checkbox" value="2b"> +1234</label>
+          <label><input type="checkbox" value="2c"> +1111</label>
+          <label><input type="checkbox" value="2d"> +9999</label>
+        </div>
+      </div>
+      <!-- Rule 3 -->
+      <div class="rule-group">
+        <label>3. Thêm năm</label>
+        <div class="subrules">
+          <label><input type="checkbox" value="3a"> +1990</label>
+          <label><input type="checkbox" value="3b"> +2000</label>
+          <label><input type="checkbox" value="3c"> +2020</label>
+          <label><input type="checkbox" value="3d"> +90</label>
+          <label><input type="checkbox" value="3e"> +95</label>
+        </div>
+      </div>
+      <!-- Rule 4 -->
+      <div class="rule-group">
+        <label>4. Thêm ký tự đặc biệt</label>
+        <div class="subrules">
+          <label><input type="checkbox" value="4a"> +@</label>
+          <label><input type="checkbox" value="4b"> +@@</label>
+          <label><input type="checkbox" value="4c"> +!</label>
+        </div>
+      </div>
+      <!-- Rule 5 -->
+      <div class="rule-group">
+        <label>5. Hậu tố kiểu Việt</label>
+        <div class="subrules">
+          <label><input type="checkbox" value="5a"> +vip</label>
+          <label><input type="checkbox" value="5b"> +pro</label>
+          <label><input type="checkbox" value="5c"> +cute</label>
+          <label><input type="checkbox" value="5d"> +love</label>
+          <label><input type="checkbox" value="5e"> +baby</label>
+        </div>
+      </div>
+      <!-- Rule 6 -->
+      <div class="rule-group">
+        <label>6. Chuyển sang leet</label>
+        <div class="subrules">
+          <label><input type="checkbox" value="6a"> a→@</label>
+          <label><input type="checkbox" value="6b"> o→0</label>
+          <label><input type="checkbox" value="6c"> i→1</label>
+          <label><input type="checkbox" value="6d"> e→3</label>
+        </div>
+      </div>
+      <!-- Rule 7 -->
+      <div class="rule-group">
+        <label>7. Thêm dấu phân cách</label>
+        <div class="subrules">
+          <label><input type="checkbox" value="7a"> _</label>
+          <label><input type="checkbox" value="7b"> -</label>
+          <label><input type="checkbox" value="7c"> .</label>
+        </div>
+      </div>
+      <!-- Rule 8 -->
+      <div class="rule-group">
+        <label>8. Đảo ngược chuỗi</label>
+        <div class="subrules">
+          <label><input type="checkbox" value="8a"> Reverse</label>
+        </div>
+      </div>
+      <!-- Rule 9 -->
+      <div class="rule-group">
+        <label>9. Nhân đôi mật khẩu</label>
+        <div class="subrules">
+          <label><input type="checkbox" value="9a"> Double</label>
+        </div>
+      </div>
+      <!-- Rule 10 -->
+      <div class="rule-group">
+        <label>10. Biến đổi từ username</label>
+        <div class="subrules">
+          <label><input type="checkbox" value="10a"> +123</label>
+          <label><input type="checkbox" value="10b"> +@</label>
+          <label><input type="checkbox" value="10c"> +1999</label>
+        </div>
+      </div>
     </div>
 
     <h3>Kết quả (<span id="count">0</span> dòng):</h3>
@@ -116,106 +134,125 @@
 const MAX_LEN = 18;
 let lastResult = "";
 
-function removeAccents(str) {
-  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-}
-function tokenize(pwd) {
-  return pwd.match(/[A-Za-z]+|\d+|[^A-Za-z0-9]/g) || [];
-}
-function validVariant(variant, original) {
-  if (!variant || variant === original) return false;
-  if (variant.length > MAX_LEN) return false;
-  if (/^(.)\1+$/.test(variant)) return false;
+function removeAccents(str){return str.normalize("NFD").replace(/[\u0300-\u036f]/g,"");}
+function tokenize(pwd){return pwd.match(/[A-Za-z]+|\d+|[^A-Za-z0-9]/g)||[];}
+function validVariant(variant,original){
+  if(!variant||variant===original) return false;
+  if(variant.length>MAX_LEN) return false;
+  if(/^(.)\1+$/.test(variant)) return false;
   return true;
 }
 
-// RULES
-function rule_case(tokens) {
-  let word = tokens.join("");
-  return [
-    word.toLowerCase(),
-    word.toUpperCase(),
-    // Viết hoa chữ cái đầu tiên tìm thấy trong chuỗi (bỏ qua số/ký tự đặc biệt)
-    word.replace(/([a-zA-Z])/, (c) => c.toUpperCase())
-  ];
-}
-function rule_add_number(tokens) { return [tokens.join("")+"123", tokens.join("")+"1234", tokens.join("")+"1111", tokens.join("")+"9999"]; }
-function rule_add_year(tokens) { return [tokens.join("")+"1990", tokens.join("")+"2000", tokens.join("")+"2020", tokens.join("")+"90", tokens.join("")+"95"]; }
-function rule_add_special(tokens) { return [tokens.join("")+"@", tokens.join("")+"@@", tokens.join("")+"!"]; }
-function rule_vn_suffix(tokens) { return [tokens.join("")+"vip", tokens.join("")+"pro", tokens.join("")+"cute", tokens.join("")+"love", tokens.join("")+"baby"]; }
-function rule_leet(tokens) { return [tokens.join("").replace(/a/g,"@").replace(/o/g,"0").replace(/i/g,"1").replace(/e/g,"3")]; }
-function rule_separator(tokens) {
-  let word = tokens.join("");
-  let m = word.match(/^([A-Za-z]+)(\d+)$/);
-  if (m) return [m[1]+"_"+m[2], m[1]+"-"+m[2], m[1]+"."+m[2]];
-  return [];
-}
-function rule_reverse(tokens) { return [tokens.join("").split("").reverse().join("")]; }
-function rule_double(tokens) { let w = tokens.join(""); return w.length<8 ? [w+w] : []; }
-function rule_username(user) { let base = user.split("@")[0]; return [base+"123", base+"@", base+"1999"]; }
+// Subrule functions
+function rule_1a(tokens){return [tokens.join("").toLowerCase()];}
+function rule_1b(tokens){return [tokens.join("").toUpperCase()];}
+function rule_1c(tokens){return [tokens.join("").replace(/([a-zA-Z])/,c=>c.toUpperCase())];}
 
-const RULES_MAP = {
-  "1": rule_case,
-  "2": rule_add_number,
-  "3": rule_add_year,
-  "4": rule_add_special,
-  "5": rule_vn_suffix,
-  "6": rule_leet,
-  "7": rule_separator,
-  "8": rule_reverse,
-  "9": rule_double,
-  "10": rule_username
+function rule_2a(tokens){return [tokens.join("")+"123"];}
+function rule_2b(tokens){return [tokens.join("")+"1234"];}
+function rule_2c(tokens){return [tokens.join("")+"1111"];}
+function rule_2d(tokens){return [tokens.join("")+"9999"];}
+
+function rule_3a(tokens){return [tokens.join("")+"1990"];}
+function rule_3b(tokens){return [tokens.join("")+"2000"];}
+function rule_3c(tokens){return [tokens.join("")+"2020"];}
+function rule_3d(tokens){return [tokens.join("")+"90"];}
+function rule_3e(tokens){return [tokens.join("")+"95"];}
+
+function rule_4a(tokens){return [tokens.join("")+"@"];}
+function rule_4b(tokens){return [tokens.join("")+"@@"];}
+function rule_4c(tokens){return [tokens.join("")+"!"];}
+
+function rule_5a(tokens){return [tokens.join("")+"vip"];}
+function rule_5b(tokens){return [tokens.join("")+"pro"];}
+function rule_5c(tokens){return [tokens.join("")+"cute"];}
+function rule_5d(tokens){return [tokens.join("")+"love"];}
+function rule_5e(tokens){return [tokens.join("")+"baby"];}
+
+function rule_6a(tokens){return [tokens.join("").replace(/a/g,"@")];}
+function rule_6b(tokens){return [tokens.join("").replace(/o/g,"0")];}
+function rule_6c(tokens){return [tokens.join("").replace(/i/g,"1")];}
+function rule_6d(tokens){return [tokens.join("").replace(/e/g,"3")];}
+
+function rule_7a(tokens){
+  let word=tokens.join("");let m=word.match(/^([A-Za-z]+)(\d+)$/);
+  return m?[m[1]+"_"+m[2]]:[];
+}
+function rule_7b(tokens){
+  let word=tokens.join("");let m=word.match(/^([A-Za-z]+)(\d+)$/);
+  return m?[m[1]+"-"+m[2]]:[];
+}
+function rule_7c(tokens){
+  let word=tokens.join("");let m=word.match(/^([A-Za-z]+)(\d+)$/);
+  return m?[m[1]+"."+m[2]]:[];
+}
+
+function rule_8a(tokens){return [tokens.join("").split("").reverse().join("")];}
+
+function rule_9a(tokens){let w=tokens.join("");return w.length<8?[w+w]:[];}
+
+function rule_10a(user){let base=user.split("@")[0];return [base+"123"];}
+function rule_10b(user){let base=user.split("@")[0];return [base+"@"];}
+function rule_10c(user){let base=user.split("@")[0];return [base+"1999"];}
+
+// Map
+const RULES_MAP={
+  "1a":rule_1a,"1b":rule_1b,"1c":rule_1c,
+  "2a":rule_2a,"2b":rule_2b,"2c":rule_2c,"2d":rule_2d,
+  "3a":rule_3a,"3b":rule_3b,"3c":rule_3c,"3d":rule_3d,"3e":rule_3e,
+  "4a":rule_4a,"4b":rule_4b,"4c":rule_4c,
+  "5a":rule_5a,"5b":rule_5b,"5c":rule_5c,"5d":rule_5d,"5e":rule_5e,
+  "6a":rule_6a,"6b":rule_6b,"6c":rule_6c,"6d":rule_6d,
+  "7a":rule_7a,"7b":rule_7b,"7c":rule_7c,
+  "8a":rule_8a,
+  "9a":rule_9a,
+  "10a":rule_10a,"10b":rule_10b,"10c":rule_10c
 };
 
-document.getElementById("fileInput").addEventListener("change", function(){
-  const file = this.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    processFile(e.target.result);
-  };
-  reader.readAsText(file, "utf-8");
+document.getElementById("fileInput").addEventListener("change",function(){
+  const file=this.files[0];if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){processFile(e.target.result);};
+  reader.readAsText(file,"utf-8");
 });
 
-function processFile(content) {
-  let lines = content.split("\n").map(l=>l.trim()).filter(l=>l.length>0);
-  let results = new Set();
-  const chosen = Array.from(document.querySelectorAll(".rules input:checked")).map(c=>c.value);
+function processFile(content){
+  let lines=content.split("\n").map(l=>l.trim()).filter(l=>l.length>0);
+  let results=new Set();
+  const chosen=Array.from(document.querySelectorAll(".rules input:checked")).map(c=>c.value);
 
-  for (let line of lines) {
-    if (!line.includes(":")) continue;
-    let parts = line.split(":");
-    let user = parts[0].trim();
-    let pwd = parts.slice(1).join(":").trim();
-    pwd = removeAccents(pwd);
-    if (!pwd) continue;
-    let tokens = tokenize(pwd);
+  for(let line of lines){
+    if(!line.includes(":")) continue;
+    let parts=line.split(":");
+    let user=parts[0].trim();
+    let pwd=parts.slice(1).join(":").trim();
+    pwd=removeAccents(pwd);
+    if(!pwd) continue;
+    let tokens=tokenize(pwd);
 
-    for (let rid of chosen) {
-      let variants = RULES_MAP[rid](rid==="10"?user:tokens);
-      if (!Array.isArray(variants)) variants=[variants];
-      for (let v of variants) {
-        if (validVariant(v,pwd)) results.add(user+":"+v);
+    for(let rid of chosen){
+      let fn=RULES_MAP[rid];
+      if(!fn) continue;
+      let variants=rid.startsWith("10")?fn(user):fn(tokens);
+      if(!Array.isArray(variants)) variants=[variants];
+      for(let v of variants){
+        if(validVariant(v,pwd)) results.add(user+":"+v);
       }
     }
   }
 
-  lastResult = Array.from(results).join("\n");
-  document.getElementById("output").textContent = lastResult || "Không có kết quả.";
-  document.getElementById("count").textContent = results.size;
-  document.getElementById("downloadBtn").disabled = results.size===0;
+  lastResult=Array.from(results).join("\n");
+  document.getElementById("output").textContent=lastResult||"Không có kết quả.";
+  document.getElementById("count").textContent=results.size;
+  document.getElementById("downloadBtn").disabled=results.size===0;
 }
 
-document.getElementById("downloadBtn").addEventListener("click", function(){
-  if (!lastResult) return;
-  const blob = new Blob([lastResult], {type: "text/plain"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "ket_qua.txt";
-  a.click();
+document.getElementById("downloadBtn").addEventListener("click",function(){
+  if(!lastResult) return;
+  const blob=new Blob([lastResult],{type:"text/plain"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="ket_qua.txt";a.click();
   URL.revokeObjectURL(url);
 });
 </script>
-</body>
-</html>
