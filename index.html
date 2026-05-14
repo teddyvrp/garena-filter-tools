@@ -1,3 +1,6 @@
+Copilot Chat
+Add combo mode for variant generation
+You said: ``` <!DOCTYPE html> <html lang="vi"> <head> <meta charset="UTF-8">
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -1461,26 +1464,20 @@ function stopProcessing() {
 }
 
 // ============================================
-// EXPORT FUNCTIONS - ✅ FIX: DOWNLOAD ALL DATA
+// EXPORT FUNCTIONS
 // ============================================
 
 function downloadResults() {
-  if (allResults.size === 0) {
-    showToast("❌ Không có dữ liệu để tải!", "error");
-    return;
-  }
+  if (allResults.size === 0) return;
   
   const format = document.getElementById("exportFormat").value;
   let content, filename, type;
   
-  // ✅ FIX: Lấy TẤT CẢ items từ allResults, không chỉ preview
   const items = Array.from(allResults.keys());
   
   if (format === "csv") {
     content = "username,password\n" + items.map(line => {
-      const colonIndex = line.indexOf(":");
-      const user = line.substring(0, colonIndex);
-      const pass = line.substring(colonIndex + 1);
+      const [user, pass] = line.split(":");
       return `"${user}","${pass}"`;
     }).join("\n");
     filename = `passwords_${Date.now()}.csv`;
@@ -1497,7 +1494,6 @@ function downloadResults() {
     filename = `passwords_${Date.now()}.json`;
     type = "application/json;charset=utf-8";
   } else {
-    // TXT format - giữ nguyên format username:password
     content = items.join("\n");
     filename = `passwords_${Date.now()}.txt`;
     type = "text/plain;charset=utf-8";
@@ -1511,9 +1507,7 @@ function downloadResults() {
   link.click();
   
   setTimeout(() => URL.revokeObjectURL(url), 100);
-  
-  // ✅ Hiển thị số lượng dòng thực tế được tải
-  showToast(`✅ Tải thành công! ${items.length} dòng`, "success");
+  showToast("✅ Tải file thành công!", "success");
 }
 
 function copyToClipboard() {
