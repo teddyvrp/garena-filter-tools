@@ -1,6 +1,3 @@
-Copilot Chat
-Add combo mode for variant generation
-You said: ``` <!DOCTYPE html> <html lang="vi"> <head> <meta charset="UTF-8">
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -1464,7 +1461,7 @@ function stopProcessing() {
 }
 
 // ============================================
-// EXPORT FUNCTIONS
+// EXPORT FUNCTIONS - ✅ FIXED
 // ============================================
 
 function downloadResults() {
@@ -1473,6 +1470,7 @@ function downloadResults() {
   const format = document.getElementById("exportFormat").value;
   let content, filename, type;
   
+  // ✅ FIX: Download TẤT CẢ items, không phải chỉ preview
   const items = Array.from(allResults.keys());
   
   if (format === "csv") {
@@ -1507,7 +1505,7 @@ function downloadResults() {
   link.click();
   
   setTimeout(() => URL.revokeObjectURL(url), 100);
-  showToast("✅ Tải file thành công!", "success");
+  showToast(`✅ Tải ${allResults.size} variants thành công!`, "success");
 }
 
 function copyToClipboard() {
