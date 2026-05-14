@@ -205,98 +205,6 @@
       border-color: #667eea;
     }
 
-    .chain-container {
-      background: #f9f9f9;
-      border: 1px solid #e0e0e0;
-      border-radius: 10px;
-      padding: 20px;
-      margin: 20px 0;
-    }
-
-    .chain-step {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 15px;
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-    }
-
-    .step-number {
-      background: #667eea;
-      color: #fff;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      flex-shrink: 0;
-    }
-
-    .step-select {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-
-    .step-select:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    .step-remove {
-      padding: 8px 15px;
-      background: #f44336;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.2s ease;
-    }
-
-    .step-remove:hover {
-      background: #d32f2f;
-      transform: scale(1.05);
-    }
-
-    .chain-preview {
-      background: #e3f2fd;
-      border: 1px solid #667eea;
-      border-radius: 8px;
-      padding: 15px;
-      margin-top: 15px;
-      font-size: 13px;
-      color: #333;
-      font-family: "Courier New", monospace;
-      word-break: break-word;
-    }
-
-    .add-step-btn {
-      padding: 10px 20px;
-      background: #4caf50;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      transition: all 0.2s ease;
-      margin-top: 15px;
-    }
-
-    .add-step-btn:hover {
-      background: #45a049;
-      transform: scale(1.05);
-    }
-
     .settings-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -589,14 +497,6 @@
         font-size: 12px;
         padding: 10px 15px;
       }
-
-      .chain-step {
-        flex-wrap: wrap;
-      }
-
-      .step-select {
-        min-width: 100%;
-      }
     }
   </style>
 </head>
@@ -617,7 +517,6 @@
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('basic')">⚡ Basic Rules</button>
       <button class="tab-btn" onclick="switchTab('advanced')">🔧 Advanced</button>
-      <button class="tab-btn" onclick="switchTab('chain')">🔗 Chain/Merge</button>
       <button class="tab-btn" onclick="switchTab('custom')">✏️ Custom Patterns</button>
       <button class="tab-btn" onclick="switchTab('settings')">⚙️ Settings</button>
     </div>
@@ -647,25 +546,6 @@
       <div class="button-group">
         <button id="generateAdvBtn" class="btn btn-primary" onclick="generateVariants('advanced')" disabled>
           ⚡ Tạo Variants (Advanced + Chain)
-        </button>
-      </div>
-    </div>
-
-    <!-- Chain/Merge Tab -->
-    <div id="chain" class="tab-content">
-      <div class="info-box">
-        🔗 Kết hợp các rules từ <strong>các nhóm KHÁC NHAU</strong> để tạo mutations phức tạp. VD: Viết thường + Thêm @
-      </div>
-      <div class="chain-container">
-        <div id="chainStepsContainer"></div>
-        <button class="add-step-btn" onclick="addChainStep()">➕ Thêm Step</button>
-        <div class="chain-preview" id="chainPreview">
-          🔵 Password gốc → (chưa có bước nào)
-        </div>
-      </div>
-      <div class="button-group">
-        <button id="generateChainBtn" class="btn btn-primary" onclick="generateVariants('chain')" disabled>
-          🔗 Tạo Variants (Chain/Merge)
         </button>
       </div>
     </div>
@@ -921,7 +801,6 @@ let allResults = new Map();
 let lastData = null;
 let isProcessing = false;
 let shouldStop = false;
-let chainSteps = [];
 
 // ============================================
 // UTILITY FUNCTIONS
@@ -947,6 +826,10 @@ function validVariant(variant, original) {
   return true;
 }
 
+/**
+ * ✅ FIX: Better entropy check
+ * Detects: aaaa, 1111, abcabc, 123123, qwertyqwerty
+ */
 function hasEntropyIssue(str) {
   if (/^(.)\1{3,}$/.test(str)) return true;
   
@@ -1177,128 +1060,77 @@ const RULES_MAP = {
 };
 
 // ============================================
-// CHAIN FUNCTIONS
+// ADVANCED MUTATIONS
 // ============================================
 
-function getRuleGroupId(ruleId) {
-  const groupId = ruleId.substring(0, ruleId.length - 1);
-  return groupId;
-}
-
-function getRuleLabel(ruleId) {
-  for (const group of RULES_CONFIG) {
-    const rule = group.rules.find(r => r.id === ruleId);
-    if (rule) return rule.label;
-  }
-  return ruleId;
-}
-
-function addChainStep() {
-  chainSteps.push(null);
-  renderChainSteps();
-  updateButtonStates();
-}
-
-function removeChainStep(index) {
-  chainSteps.splice(index, 1);
-  renderChainSteps();
-  updateButtonStates();
-}
-
-function updateChainStep(index, ruleId) {
-  chainSteps[index] = ruleId;
-  renderChainSteps();
-  updateButtonStates();
-}
-
-function renderChainSteps() {
-  const container = document.getElementById("chainStepsContainer");
-  container.innerHTML = "";
-
-  chainSteps.forEach((ruleId, index) => {
-    const stepDiv = document.createElement("div");
-    stepDiv.className = "chain-step";
-
-    const stepNum = document.createElement("div");
-    stepNum.className = "step-number";
-    stepNum.textContent = index + 1;
-    stepDiv.appendChild(stepNum);
-
-    const select = document.createElement("select");
-    select.className = "step-select";
-    select.onchange = (e) => updateChainStep(index, e.target.value);
-
-    const defaultOption = document.createElement("option");
-    defaultOption.value = "";
-    defaultOption.textContent = "-- Chọn rule --";
-    select.appendChild(defaultOption);
-
-    for (const group of RULES_CONFIG) {
-      const optgroup = document.createElement("optgroup");
-      optgroup.label = group.name;
-      
-      group.rules.forEach(rule => {
-        const option = document.createElement("option");
-        option.value = rule.id;
-        option.textContent = rule.label;
-        if (rule.id === ruleId) option.selected = true;
-        optgroup.appendChild(option);
-      });
-      
-      select.appendChild(optgroup);
-    }
-
-    stepDiv.appendChild(select);
-
-    const removeBtn = document.createElement("button");
-    removeBtn.className = "step-remove";
-    removeBtn.textContent = "❌ Xóa";
-    removeBtn.onclick = () => removeChainStep(index);
-    stepDiv.appendChild(removeBtn);
-
-    container.appendChild(stepDiv);
-  });
-
-  updateChainPreview();
-}
-
-function updateChainPreview() {
-  const preview = document.getElementById("chainPreview");
-  let text = "🔵 Password gốc";
+function mutateWord(word) {
+  const results = new Set();
   
-  for (let i = 0; i < chainSteps.length; i++) {
-    const ruleId = chainSteps[i];
-    if (ruleId) {
-      text += ` → ↓ Step ${i + 1} (${getRuleLabel(ruleId)})`;
+  function helper(str, index) {
+    results.add(str);
+    
+    for (let i = index; i < str.length; i++) {
+      const c = str[i].toLowerCase();
+      
+      if (LEET_MAP[c]) {
+        for (const rep of LEET_MAP[c]) {
+          helper(
+            str.substring(0, i) + rep + str.substring(i + 1),
+            i + 1
+          );
+        }
+      }
     }
   }
   
-  if (chainSteps.filter(r => r).length === 0) {
-    text = "🔵 Password gốc → (chưa có bước nào)";
-  } else {
-    text += " → 🏁 Kết quả";
-  }
-  
-  preview.textContent = text;
+  helper(word, 0);
+  return Array.from(results);
 }
 
-function validateChainRules() {
-  const selectedRules = chainSteps.filter(r => r);
+/**
+ * ✅ Chain rules with proper limit
+ */
+async function applyRuleChain(base, user, selectedRules, depth, limit) {
+  const results = new Set([base]);
+  let currentLayer = [base];
   
-  if (selectedRules.length === 0) {
-    showToast("❌ Vui lòng thêm ít nhất một step!", "error");
-    return false;
+  for (let layer = 0; layer < depth; layer++) {
+    if (isProcessing === false) break;
+    
+    const nextLayer = new Set();
+    
+    for (const pwd of currentLayer) {
+      const tokens = tokenize(pwd);
+      
+      for (const ruleId of selectedRules) {
+        if (results.size >= limit) break;
+        
+        const ruleFn = RULES_MAP[ruleId];
+        if (!ruleFn) continue;
+        
+        try {
+          const variants = ruleId.startsWith("10") ? ruleFn(user) : ruleFn(tokens);
+          const variantsArray = Array.isArray(variants) ? variants : [variants];
+          
+          for (const v of variantsArray) {
+            if (results.size >= limit) break;
+            if (validVariant(v, base)) {
+              results.add(v);
+              nextLayer.add(v);
+            }
+          }
+        } catch (e) {
+          console.error(`Error in rule ${ruleId}:`, e);
+        }
+      }
+    }
+    
+    currentLayer = Array.from(nextLayer);
+    if (currentLayer.length === 0) break;
   }
-
-  const groupIds = selectedRules.map(r => getRuleGroupId(r));
-  const uniqueGroups = new Set(groupIds);
-
-  if (groupIds.length !== uniqueGroups.size) {
-    showToast("❌ Không thể chọn 2 rules từ cùng 1 nhóm!", "error");
-    return false;
-  }
-
-  return true;
+  
+  results.delete(base);
+  return Array.from(results);
 }
 
 // ============================================
@@ -1350,36 +1182,13 @@ function createRuleGroup(group, tab) {
   return groupDiv;
 }
 
-function validateBasicOrAdvancedRules(mode) {
-  const selector = mode === "basic" ? "#basicRulesContainer" : "#advancedRulesContainer";
-  const selectedRules = Array.from(document.querySelectorAll(`${selector} input:checked`))
-    .map((c) => c.value);
-
-  if (selectedRules.length === 0) {
-    showToast("❌ Vui lòng chọn ít nhất một rule!", "error");
-    return null;
-  }
-
-  const groupIds = selectedRules.map(r => getRuleGroupId(r));
-  const uniqueGroups = new Set(groupIds);
-
-  if (groupIds.length !== uniqueGroups.size) {
-    showToast("❌ Không thể chọn 2 rules từ cùng 1 nhóm!", "error");
-    return null;
-  }
-
-  return selectedRules;
-}
-
 function updateButtonStates() {
   const hasFile = lastData !== null;
   const hasBasicRules = document.querySelectorAll('#basicRulesContainer input:checked').length > 0;
   const hasAdvRules = document.querySelectorAll('#advancedRulesContainer input:checked').length > 0;
-  const hasChainSteps = chainSteps.filter(r => r).length > 0;
   
   document.getElementById("generateBasicBtn").disabled = !hasFile || !hasBasicRules;
   document.getElementById("generateAdvBtn").disabled = !hasFile || !hasAdvRules;
-  document.getElementById("generateChainBtn").disabled = !hasFile || !hasChainSteps;
   document.getElementById("clearBasicBtn").disabled = lastResult === "";
   document.getElementById("downloadBtn").disabled = lastResult === "";
   document.getElementById("copyBtn").disabled = lastResult === "";
@@ -1480,29 +1289,19 @@ async function generateVariants(mode) {
     return;
   }
   
-  let chosen = [];
-
-  if (mode === "basic" || mode === "advanced") {
-    chosen = validateBasicOrAdvancedRules(mode);
-    if (!chosen) return;
-  } else if (mode === "chain") {
-    if (!validateChainRules()) return;
-    chosen = chainSteps.filter(r => r);
-  }
-  
   if (isProcessing) return;
   isProcessing = true;
   shouldStop = false;
   
   document.getElementById("generateBasicBtn").disabled = true;
   document.getElementById("generateAdvBtn").disabled = true;
-  document.getElementById("generateChainBtn").disabled = true;
   document.getElementById("stopBtn").style.display = "inline-flex";
   document.getElementById("progressSection").classList.add("active");
   
-  let totalProcessed = 0;
-
+  let chosen = [];
+  
   if (mode === "custom") {
+    // Handle custom patterns
     const suffixes = document.getElementById("customSuffixes").value.split("\n").filter(x => x.trim());
     const prefixes = document.getElementById("customPrefixes").value.split("\n").filter(x => x.trim());
     const separators = document.getElementById("customSeparators").value.split("\n").filter(x => x.trim());
@@ -1515,6 +1314,7 @@ async function generateVariants(mode) {
       const user = item.user;
       const pass = item.pass;
       
+      // Add suffixes
       for (const suffix of suffixes) {
         const variant = pass + suffix;
         if (validVariant(variant, pass) && variant.length <= MAX_LENGTH) {
@@ -1523,6 +1323,7 @@ async function generateVariants(mode) {
         }
       }
       
+      // Add prefixes
       for (const prefix of prefixes) {
         const variant = prefix + pass;
         if (validVariant(variant, pass) && variant.length <= MAX_LENGTH) {
@@ -1531,6 +1332,7 @@ async function generateVariants(mode) {
         }
       }
       
+      // Add separators
       for (const sep of separators) {
         const m = pass.match(/^([A-Za-z]+)(\d+)$/) || pass.match(/^(\d+)([A-Za-z]+)$/);
         if (m) {
@@ -1545,10 +1347,26 @@ async function generateVariants(mode) {
       }
     }
   } else {
+    const selector = mode === "basic" ? "#basicRulesContainer" : "#advancedRulesContainer";
+    chosen = Array.from(document.querySelectorAll(`${selector} input:checked`))
+      .map((c) => c.value);
+    
+    if (chosen.length === 0) {
+      showToast("❌ Vui lòng chọn ít nhất một quy tắc!", "error");
+      isProcessing = false;
+      document.getElementById("generateBasicBtn").disabled = false;
+      document.getElementById("generateAdvBtn").disabled = false;
+      document.getElementById("stopBtn").style.display = "none";
+      document.getElementById("progressSection").classList.remove("active");
+      return;
+    }
+    
     allResults.clear();
     const chunkSize = parseInt(document.getElementById("chunkSize").value);
     const maxResults = parseInt(document.getElementById("maxResults").value);
     const depth = mode === "advanced" ? parseInt(document.getElementById("mutationDepth").value) : 1;
+    
+    let totalProcessed = 0;
     
     for (let i = 0; i < lastData.length; i += chunkSize) {
       if (!isProcessing || shouldStop) break;
@@ -1585,14 +1403,6 @@ async function generateVariants(mode) {
               console.error(e);
             }
           }
-        } else if (mode === "chain") {
-          const variants = await applyChainRules(origPass, user, chosen, maxResults);
-          
-          for (const v of variants) {
-            if (allResults.size >= maxResults) break;
-            const key = `${user.toLowerCase()}:${v}`;
-            allResults.set(key, true);
-          }
         } else {
           const variants = await applyRuleChain(origPass, user, chosen, depth, maxResults);
           
@@ -1625,86 +1435,9 @@ async function generateVariants(mode) {
   shouldStop = false;
   document.getElementById("generateBasicBtn").disabled = false;
   document.getElementById("generateAdvBtn").disabled = false;
-  document.getElementById("generateChainBtn").disabled = false;
   document.getElementById("stopBtn").style.display = "none";
   document.getElementById("progressSection").classList.remove("active");
   updateButtonStates();
-}
-
-async function applyChainRules(base, user, selectedRules, limit) {
-  let current = base;
-  const results = new Set([base]);
-  
-  for (let step = 0; step < selectedRules.length; step++) {
-    if (!isProcessing || shouldStop) break;
-    
-    const ruleId = selectedRules[step];
-    const ruleFn = RULES_MAP[ruleId];
-    
-    if (!ruleFn) continue;
-    
-    try {
-      const tokens = tokenize(current);
-      const variants = ruleId.startsWith("10") || ruleId.startsWith("12") ? ruleFn(user) : ruleFn(tokens);
-      const variantsArray = Array.isArray(variants) ? variants : [variants];
-      
-      for (const v of variantsArray) {
-        if (validVariant(v, base) && results.size < limit) {
-          results.add(v);
-          current = v;
-          break;
-        }
-      }
-    } catch (e) {
-      console.error(`Error in rule ${ruleId}:`, e);
-    }
-  }
-  
-  results.delete(base);
-  return Array.from(results);
-}
-
-async function applyRuleChain(base, user, selectedRules, depth, limit) {
-  const results = new Set([base]);
-  let currentLayer = [base];
-  
-  for (let layer = 0; layer < depth; layer++) {
-    if (!isProcessing || shouldStop) break;
-    
-    const nextLayer = new Set();
-    
-    for (const pwd of currentLayer) {
-      const tokens = tokenize(pwd);
-      
-      for (const ruleId of selectedRules) {
-        if (results.size >= limit) break;
-        
-        const ruleFn = RULES_MAP[ruleId];
-        if (!ruleFn) continue;
-        
-        try {
-          const variants = ruleId.startsWith("10") ? ruleFn(user) : ruleFn(tokens);
-          const variantsArray = Array.isArray(variants) ? variants : [variants];
-          
-          for (const v of variantsArray) {
-            if (results.size >= limit) break;
-            if (validVariant(v, base)) {
-              results.add(v);
-              nextLayer.add(v);
-            }
-          }
-        } catch (e) {
-          console.error(`Error in rule ${ruleId}:`, e);
-        }
-      }
-    }
-    
-    currentLayer = Array.from(nextLayer);
-    if (currentLayer.length === 0) break;
-  }
-  
-  results.delete(base);
-  return Array.from(results);
 }
 
 function displayResults() {
@@ -1788,12 +1521,10 @@ function clearAll() {
   lastResult = "";
   allResults.clear();
   lastData = null;
-  chainSteps = [];
   document.getElementById("fileInput").value = "";
   document.querySelectorAll(".rules input:checked").forEach((c) => {
     c.checked = false;
   });
-  renderChainSteps();
   document.getElementById("output").textContent = "Chưa có dữ liệu. Vui lòng tải file lên.";
   document.getElementById("count").textContent = "0";
   document.getElementById("totalCount").textContent = "0";
